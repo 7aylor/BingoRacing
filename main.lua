@@ -1,20 +1,22 @@
 function love.load()
     Object = require("classic")
     input = require("input")
-    world = love.physics.newWorld(0,0)
-    require("car")
-    car = Car(300, 300)
-    sky_background = love.graphics.newImage("img/unity_sky.png")
+    entities = require("entities")
+    world = require("world")
+    debugging = true
 end
 
 function love.update(dt)
-    car:update(dt)
+    for i=1,#entities do
+        entities[i]:update(dt)
+    end
     world:update(dt)
 end
 
 function love.draw()
-    --love.graphics.draw(sky_background, 0, 0)
-    car:draw()
+    for i=1,#entities do
+        entities[i]:draw()
+    end
 end
 
 function love.keypressed(key)

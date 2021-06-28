@@ -1,11 +1,14 @@
 Car = Object.extend(Object)
 input = require("input")
+world = require("world")
 
 function Car:new(x, y)
     self.speed = 0
     self.max_speed = 25000
-    self.acceleration = 100
+    self.start_acceleration = 200
+    self.acceleration = self.start_acceleration
     self.max_acceleration = 800
+    self.turn_speed = 3
 
     self.backing_up = false
     self.max_backup_speed = -self.max_speed * 0.75
@@ -13,15 +16,39 @@ function Car:new(x, y)
     self.max_backup_accelaration = -self.max_acceleration * 0.75
     
     self.scale = 0.5
-    self.turn_speed = 3
+
     self.image = love.graphics.newImage("img/blue_car.png")
     self.height = self.image:getHeight() * self.scale
     self.width = self.image:getWidth() * self.scale
+    
     self.body = love.physics.newBody(world, x, y, "dynamic")
-    self.body:setMass(1000)
-    self.shape = love.physics.newRectangleShape(self.height, self.width)
+    -- self.shape = love.physics.newRectangleShape(self.height - 12, self.width - 6)
+    local hitbox = {
+        -self.height/2 + 4, -self.width/2 + 3, -- back right
+        -self.height/2 + 4, self.width/2 - 3,  -- back left
+        self.height/2 - 4, -self.width/2 + 6,  -- front right outside
+        self.height/2 - 14, -self.width/2 + 1,  -- front right inside
+        self.height/2, 0,  -- front point
+        self.height/2 - 14, self.width/2 - 1,   -- front left inside
+        self.height/2 - 4, self.width/2 - 6    -- front left outside
+    }
+    self.shape = love.physics.newPolygonShape(hitbox)
     self.fixture = love.physics.newFixture(self.body, self.shape)
-    self.fixture:setFriction(1)
+    
+    self.body:setMass(1000)
+    self.body:setLinearDamping(2)
+    self.body:setAngularDamping(50)
+    self.fixture:setFriction(0.01)
+    self.fixture:setRestitution(0.5)
+    self.fixture:setUserData({
+        name = "car",
+        collisionHandler = function()
+            self.speed = self.speed / 5
+            self.acceleration = self.acceleration / 2
+        end
+    })
+    self.body:setAngle(-math.pi / 2)
+
 end
 
 function Car:update(dt)
@@ -29,8 +56,6 @@ function Car:update(dt)
     local y = self.body:getY()
     local current_angle = self.body:getAngle()
     local current_velocity = self.body:getLinearVelocity()
-    -- print("cos: " .. cos .. ", sin: " .. sin)
-    print(self.speed)
 
     if input.actions["go_forward"] then
         self.backing_up = false
@@ -72,15 +97,15 @@ function Car:update(dt)
             end
         end
 
-        self.acceleration = 50
-        self.backup_accelartion = -50
+        self.acceleration = self.start_acceleration
+        self.backup_accelartion = -self.start_acceleration
     end 
     
-    if input.actions["turn_left"] and math.abs(self.speed) > 3000 then
+    if input.actions["turn_left"] and math.abs(self.speed) > 500 then
         local direction = current_angle
         direction = direction - (self.turn_speed * dt)
         self.body:setAngle(direction)
-    elseif input.actions["turn_right"] and math.abs(self.speed) > 3000 then
+    elseif input.actions["turn_right"] and math.abs(self.speed) > 500 then
         local direction = current_angle
         direction = direction + (self.turn_speed * dt)
         self.body:setAngle(direction)
@@ -89,18 +114,29 @@ function Car:update(dt)
     local cos = math.cos(current_angle)
     local sin = math.sin(current_angle)
     self.body:setLinearVelocity((self.speed * cos * dt), (self.speed * sin * dt))
-    self.body:setLinearDamping(2)
 end
 
 function Car:draw()
-    love.graphics.draw(self.image, self.body:getX(), self.body:getY(), self.body:getAngle() + math.pi / 2, self.scale, self.scale, self.width, self.height)
+    love.graphics.draw(self.image, self.body:getX(), self.body:getY(), self.body:getAngle() + math.pi / 2, self.scale, self.scale, self.width, self.height) --math.pi / 2 rotates the image 90 degrees
 
-    local current_angle = self.body:getAngle()
-    local x = self.body:getX()
-    local y = self.body:getY()
+    if debugging then
+        local current_angle = self.body:getAngle()
+        local x = self.body:getX()
+        local y = self.body:getY()
+        local topLeftX,topLeftY,bottomRightX,bottomRightY = self.fixture:getBoundingBox(1)
+        
+        love.graphics.setColor(1,0,0,1)
 
-    -- love.graphics.setColor(1,0,0,1)
-    -- love.graphics.points(x, y)
-    -- love.graphics.line(x, y, x + math.cos(current_angle) * 100, y + math.sin(current_angle) * 100)
-    -- love.graphics.setColor(1,1,1,1)
+        love.graphics.points(x, y)
+        -- love.graphics.rectangle("line", topLeftX, topLeftY, bottomRightX - topLeftX, 
+        --     bottomRightY - topLeftY)
+        love.graphics.polygon("line", self.body:getWorldPoints(self.shape:getPoints()))
+        --love.graphics.line(x, y, x + math.cos(current_angle) * 100, y + math.sin(current_angle) * 100)
+        
+        love.graphics.setColor(1,1,1,1)
+    end
+end
+
+function Car:setCarSpeed(newSpeed)
+    self.speed = newSpeed
 end
