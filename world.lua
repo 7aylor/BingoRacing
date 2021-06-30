@@ -1,6 +1,6 @@
 local begin_contact_callback = function(fixture_a, fixture_b, contact)
     local aUserData = fixture_a:getUserData()
-    if aUserData.name == "car" then
+    if aUserData ~= null and aUserData.name == "car" then
         aUserData.collisionHandler()
     end
     --print(fixture_a, fixture_b, contact, 'beginning contact')

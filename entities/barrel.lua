@@ -14,8 +14,9 @@ function Barrel:new(x, y, color)
     self.shape = love.physics.newCircleShape(self.radius)
     self.fixture = love.physics.newFixture(self.body, self.shape)
 
-    self.body:setMass(100)
-    self.fixture:setFriction(0.5)
+    self.body:setMass(50)
+    -- self.fixture:setFriction(0.5)
+    self.fixture:setRestitution(0.5)
     self.fixture:setUserData({
         name = "barrel"
     })

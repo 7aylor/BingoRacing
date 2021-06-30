@@ -28,7 +28,7 @@ function Car:new(x, y)
         -self.height/2 + 4, self.width/2 - 3,  -- back left
         self.height/2 - 4, -self.width/2 + 6,  -- front right outside
         self.height/2 - 14, -self.width/2 + 1,  -- front right inside
-        self.height/2, 0,  -- front point
+        -- self.height/2, 0,  -- front point
         self.height/2 - 14, self.width/2 - 1,   -- front left inside
         self.height/2 - 4, self.width/2 - 6    -- front left outside
     }
@@ -39,12 +39,15 @@ function Car:new(x, y)
     self.body:setLinearDamping(2)
     self.body:setAngularDamping(50)
     self.fixture:setFriction(0.01)
-    self.fixture:setRestitution(0.5)
+    -- self.fixture:setRestitution(0.5)
     self.fixture:setUserData({
         name = "car",
         collisionHandler = function()
-            self.speed = self.speed / 5
-            self.acceleration = self.acceleration / 2
+            self.speed = self.speed / 10
+            self.acceleration = self.acceleration / 10
+            self.body:setAngularVelocity(0)
+            -- self.speed = 0
+            -- self.acceleration = self.start_acceleration
         end
     })
     self.body:setAngle(-math.pi / 2)

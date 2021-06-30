@@ -6,7 +6,8 @@ keymap = {
     turn_right = {"right", "d"},
     powerup = {"space"},
     quit = {"escape"},
-    pause = {"p"}
+    pause = {"p"},
+    restart = {"r"}
 }
 --table that holds currently pressed keys and related functions
 input = {
@@ -25,6 +26,10 @@ input.keypressed = function(key)
     end
     if input.keymap_action_contains(key, "pause") then
         --pause game
+    end
+    if input.keymap_action_contains(key, "restart") then
+        print("restart")
+        love.event.quit('restart')
     end
 end
 
