@@ -4,7 +4,7 @@ world = require("world")
 
 function Car:new(x, y)
     self.speed = 0
-    self.max_speed = 25000
+    self.max_speed = 20000
     self.start_acceleration = 200
     self.acceleration = self.start_acceleration
     self.max_acceleration = 800
@@ -15,43 +15,50 @@ function Car:new(x, y)
     self.backup_accelartion = -self.acceleration
     self.max_backup_accelaration = -self.max_acceleration * 0.75
     
-    self.scale = 0.5
+    self.scale = 0.4
 
     self.image = love.graphics.newImage("img/blue_car.png")
     self.height = self.image:getHeight() * self.scale
     self.width = self.image:getWidth() * self.scale
     
     self.body = love.physics.newBody(world, x, y, "dynamic")
-    -- self.shape = love.physics.newRectangleShape(self.height - 12, self.width - 6)
-    local hitbox = {
-        -self.height/2 + 4, -self.width/2 + 3, -- back right
-        -self.height/2 + 4, self.width/2 - 3,  -- back left
-        self.height/2 - 4, -self.width/2 + 6,  -- front right outside
-        self.height/2 - 14, -self.width/2 + 1,  -- front right inside
-        -- self.height/2, 0,  -- front point
-        self.height/2 - 14, self.width/2 - 1,   -- front left inside
-        self.height/2 - 4, self.width/2 - 6    -- front left outside
-    }
-    self.shape = love.physics.newPolygonShape(hitbox)
+    self.shape = love.physics.newRectangleShape(self.height - (24 * self.scale), self.width - (12 * self.scale))
+    -- local hitbox = {
+    --     -self.height/2 + 4, -self.width/2 + 3, -- back right
+    --     -self.height/2 + 4, self.width/2 - 3,  -- back left
+    --     self.height/2 - 4, -self.width/2 + 6,  -- front right outside
+    --     self.height/2 - 14, -self.width/2 + 1,  -- front right inside
+    --     self.height/2, 0,  -- front point
+    --     self.height/2 - 14, self.width/2 - 1,   -- front left inside
+    --     self.height/2 - 4, self.width/2 - 6    -- front left outside
+    -- }
+    -- self.shape = love.physics.newPolygonShape(hitbox)
     self.fixture = love.physics.newFixture(self.body, self.shape)
     
     self.body:setMass(1000)
     self.body:setLinearDamping(2)
     self.body:setAngularDamping(50)
-    self.fixture:setFriction(0.01)
-    -- self.fixture:setRestitution(0.5)
+    self.fixture:setFriction(0)
+    self.fixture:setRestitution(0.25)
     self.fixture:setUserData({
         name = "car",
         collisionHandler = function()
             self.speed = self.speed / 10
             self.acceleration = self.acceleration / 10
-            self.body:setAngularVelocity(0)
-            -- self.speed = 0
-            -- self.acceleration = self.start_acceleration
+
+            local angularVelocity = love.math.random(-10, 10)
+            self.body:setAngularVelocity(angularVelocity)
+            print(angularVelocity)
         end
     })
     self.body:setAngle(-math.pi / 2)
 
+    print("scale: " .. self.scale)
+    print("x,y: " ..x .. ", " .. y)
+    print("body x,y: " .. self.body:getX() .. ", " .. self.body:getY())
+    print("img w,h: " .. self.image:getWidth() .. ", " .. self.image:getHeight())
+    print("self w,h:" .. self.width .. ", " .. self.height)
+    print("self w/2, h/2: " .. self.width/2 .. ", " .. self.height/2)
 end
 
 function Car:update(dt)
@@ -104,11 +111,11 @@ function Car:update(dt)
         self.backup_accelartion = -self.start_acceleration
     end 
     
-    if input.actions["turn_left"] and math.abs(self.speed) > 500 then
+    if input.actions["turn_left"] and math.abs(self.speed) > 0 then
         local direction = current_angle
         direction = direction - (self.turn_speed * dt)
         self.body:setAngle(direction)
-    elseif input.actions["turn_right"] and math.abs(self.speed) > 500 then
+    elseif input.actions["turn_right"] and math.abs(self.speed) > 0 then
         local direction = current_angle
         direction = direction + (self.turn_speed * dt)
         self.body:setAngle(direction)
@@ -120,9 +127,9 @@ function Car:update(dt)
 end
 
 function Car:draw()
-    love.graphics.draw(self.image, self.body:getX(), self.body:getY(), self.body:getAngle() + math.pi / 2, self.scale, self.scale, self.width, self.height) --math.pi / 2 rotates the image 90 degrees
+    love.graphics.draw(self.image, self.body:getX(), self.body:getY(), self.body:getAngle() + math.pi / 2, self.scale, self.scale, self.width / (self.scale * 2), self.height / (self.scale * 2)) --math.pi / 2 rotates the image 90 degrees
 
-    if debugging then
+    if debug then
         local current_angle = self.body:getAngle()
         local x = self.body:getX()
         local y = self.body:getY()

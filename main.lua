@@ -3,7 +3,7 @@ function love.load()
     input = require("input")
     entities = require("entities")
     world = require("world")
-    debugging = true
+    debug = true
 end
 
 function love.update(dt)
