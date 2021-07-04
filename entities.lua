@@ -8,8 +8,6 @@ require("entities/cone")
 Entities = Object.extend(Object)
 
 function Entities:new()
-    local screen_width = love.graphics:getWidth()
-    local screen_height = love.graphics:getHeight()
     local boundary_width = 10
     local GOAL_SCALE = 0.5
 
@@ -21,33 +19,35 @@ function Entities:new()
         Boundary(0,screen_height, screen_width,boundary_width), --bottom
     }
     self.goals = {
-        Goal(2 * screen_width / 3, screen_height - 600, 0, GOAL_SCALE),
+        --Goal(2 * screen_width / 3, screen_height - 600, 0, GOAL_SCALE),
         Goal(screen_width / 3, screen_height - 600, 0, GOAL_SCALE)
     }
     self.balls = {
-        Ball(2 * screen_width / 3, screen_height - 400, "red"),
+        --Ball(2 * screen_width / 3, screen_height - 400, "red"),
         Ball(screen_width / 3, screen_height - 400, "red")
     }
     self.car = Car(screen_width / 3, screen_height - 100)
     self.obstacles = {}
 
     --create a box around the screen of cones
-    local cone = Cone(-100, -100, 1) --not to be added to entities
+    local cone_scale = 0.25
+    local cone = Cone(-100, -100, cone_scale) --not to be added to entities
     local cone_width = cone.width
     local cone_height = cone.height
-    local num_cones_horizontal = math.ceil(screen_width / cone_width)
-    local num_cones_veritcal = math.ceil(screen_height / cone_width) - 1
+    local num_cones_horizontal = math.ceil(screen_width / (cone_width * cone_scale))
+    local num_cones_veritcal = math.ceil(screen_height / (cone_width * cone_scale)) - 1
+    local cone_scale_adjuster = (1 / cone_scale)
 
     --side columns
     for i=1,num_cones_veritcal do
-        table.insert(self.obstacles, Cone(cone_width / 2, (cone_height * i) + cone_height / 2, 1))
-        table.insert(self.obstacles, Cone(screen_width - cone_width / 2, (cone_height * i) + cone_height / 2, 1))
+        table.insert(self.obstacles, Cone(cone_width / 2, ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale , cone_scale))
+        table.insert(self.obstacles, Cone(screen_width - cone_width / 2, ((cone_height * cone_scale_adjuster * i) + cone_height / 2) * cone_scale, cone_scale))
     end
 
     --top and bottom rows
     for i=0,num_cones_horizontal do
-        table.insert(self.obstacles, Cone((cone_width * i) + cone_width / 2, cone_height / 2, 1))
-        table.insert(self.obstacles, Cone((cone_width * i) + cone_width / 2, screen_height - cone_height / 2, 1))
+        table.insert(self.obstacles, Cone(((cone_width * cone_scale_adjuster * i) + cone_width / 2) * cone_scale, cone_height / 2, cone_scale))
+        table.insert(self.obstacles, Cone(((cone_width * cone_scale_adjuster * i) + cone_width / 2) * cone_scale, screen_height - cone_height / 2, cone_scale))
     end
 end
 
@@ -67,7 +67,8 @@ function Entities:update(dt)
     self.car:update(dt)
 
     if self:checkAllGoalsScored() then
-        print("win!")
+        currentGameState = "endOfLevel"
+        paused = true
     end
 end
 

@@ -23,7 +23,7 @@ function Goal:new(x,y, rotation, scale)
     self.topBlockerBody:setAngle(rotation)
 
     self.topBody = love.physics.newBody(world, x, y, "static")
-    self.topShape = love.physics.newRectangleShape(0, -self.height/2, self.width, w)
+    self.topShape = love.physics.newRectangleShape(0, -self.height/2, self.width - 10, w)
     self.topFixture = love.physics.newFixture(self.topBody, self.topShape)
     self.topBody:setAngle(rotation)
 

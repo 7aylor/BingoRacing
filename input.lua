@@ -7,7 +7,8 @@ keymap = {
     powerup = {"space"},
     quit = {"escape"},
     pause = {"p"},
-    restart = {"r"}
+    restart = {"r"},
+    next_level = {"return"}
 }
 --table that holds currently pressed keys and related functions
 input = {
@@ -19,17 +20,25 @@ input.keypressed = function(key)
     --add action to input if key from that action is pressed
     input.add_action(key)
 
-    --input.print_inputs()
-
     if input.keymap_action_contains(key, "quit") then
         love.event.quit()
     end
     if input.keymap_action_contains(key, "pause") then
-        --pause game
+        if paused then
+            currentGameState = previousGameState
+        else
+            currentGameState = "paused"
+        end
+        paused = not paused
     end
     if input.keymap_action_contains(key, "restart") then
         print("restart")
         love.event.quit('restart')
+    end
+    if input.keymap_action_contains(key, "next_level") then
+        if currentGameState == "endOfLevel" then
+            paused = false
+        end
     end
 end
 

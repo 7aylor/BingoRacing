@@ -4,12 +4,13 @@ world = require("world")
 
 function Car:new(x, y)
     self.speed = 0
-    self.max_speed = 20000
+    self.max_speed = 15000
     self.start_acceleration = 200
     self.acceleration = self.start_acceleration
     self.max_acceleration = 800
     self.turn_speed = 3
     self.hits = 0
+    self.time = 0
 
     self.backing_up = false
     self.max_backup_speed = -self.max_speed * 0.75
@@ -49,8 +50,8 @@ function Car:new(x, y)
 
             if(other:getBody():getType() == "static") then
                 local x,y = self.body:getLinearVelocity()
-                local newX = -x * 2
-                local newY = -y * 2
+                local newX = -x * 1.2
+                local newY = -y * 1.2
                 self.body:setLinearVelocity(newX, newY)
             else
                 local angularVelocity = love.math.random(-10, 10)
@@ -67,6 +68,7 @@ function Car:new(x, y)
 end
 
 function Car:update(dt)
+    self.time = self.time + dt
     local x = self.body:getX()
     local y = self.body:getY()
     local current_angle = self.body:getAngle()
