@@ -1,15 +1,11 @@
-Barrel = Object.extend(Object)
+Ball = Object.extend(Object)
 world = require("world")
 
-function Barrel:new(x, y, color)
-    if color == "red" then
-        self.image = love.graphics.newImage("/img/barrel_red.png")
-    else
-        self.image = love.graphics.newImage("/img/barrel_blue.png")
-    end
+function Ball:new(x, y)
+    self.image = love.graphics.newImage("/img/ball.png")
 
     self.inGoal = false
-    self.scale = 0.75
+    self.scale = 0.5
     self.width = self.image:getWidth() * self.scale
     self.height = self.image:getHeight() * self.scale
     self.radius = self.width / 2
@@ -23,31 +19,33 @@ function Barrel:new(x, y, color)
     self.body:setLinearDamping(0.15)
     
     self.fixture:setUserData({
-        name = "barrel",
+        name = "ball",
         collisionHandler = function()
             self:madeGoal()
         end
     })
 end
 
-function Barrel:draw()
+function Ball:draw()
+    if self.inGoal then
+        love.graphics.setColor(0,1,0,1)
+    end
     love.graphics.draw(self.image, self.body:getX(), self.body:getY(), 0, self.scale, self.scale, self.width / (self.scale * 2), self.height / (self.scale * 2))
     
     if debug then
         love.graphics.setColor(1,0,0,1)
         love.graphics.circle("line", self.body:getX(), self.body:getY(), self.radius)
         love.graphics.points(self.body:getX(), self.body:getY())
-        love.graphics.setColor(1,1,1,1)
     end
+    love.graphics.setColor(1,1,1,1)
 end
 
-function Barrel:update(dt)
+function Ball:update(dt)
 
 end
 
-function Barrel:madeGoal()
-    x,y = self.body:getLinearVelocity()
-    print("slowing barrel, x: " .. x .. ", y: " .. y)
-    self.body:setLinearVelocity(x * 0.01, y * 0.01)
+function Ball:madeGoal()
+    local x,y = self.body:getLinearVelocity()
+    self.body:setLinearVelocity(x * 0.05, y * 0.05)
     self.inGoal = true
 end

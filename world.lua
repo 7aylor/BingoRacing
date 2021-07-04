@@ -1,30 +1,38 @@
-local begin_contact_callback = function(fixture_a, fixture_b, contact)
-    local aUserData = fixture_a:getUserData()
-    if aUserData ~= nil and aUserData.name == "car" then
-        aUserData.collisionHandler()
-    end
-    -- print(fixture_a, fixture_b, contact, 'beginning contact')
-  end
-  
-  local end_contact_callback = function(fixture_a, fixture_b, contact)
-    --print(fixture_a, fixture_b, contact, 'ending contact')
+  local begin_contact_callback = function(fixture_a, fixture_b, contact)
     local aUserData = fixture_a:getUserData()
     local bUserData = fixture_b:getUserData()
-    if aUserData ~= nil and bUserData ~= nil then
-      if (aUserData.name == "barrel" and bUserData.name == "goal") then
-        aUserData.collisionHandler()
-      elseif (aUserData.name == "goal" and bUserData.name == "barrel") then
-        bUserData.collisionHandler()
+
+    if aUserData ~= nil and aUserData.name == "car" then
+      aUserData.collisionHandler(fixture_b)
+      if bUserData ~= nil and bUserData.name == "ball" then
+        aUserData.increaseHits()
+      end
+    elseif bUserData ~= nil and bUserData.name == "car" then
+      bUserData.collisionHandler(fixture_a)
+      if aUserData ~= nil and aUserData.name == "ball" then
+        bUserData.increaseHits()
       end
     end
   end
   
+  local end_contact_callback = function(fixture_a, fixture_b, contact)
+    local aUserData = fixture_a:getUserData()
+    local bUserData = fixture_b:getUserData()
+    
+    if aUserData ~= nil and bUserData ~= nil then
+      if (aUserData.name == "ball" and bUserData.name == "goal") or
+      (aUserData.name == "goal" and bUserData.name == "ball") then
+        aUserData.collisionHandler()
+        bUserData.collisionHandler()
+      end
+    end
+
+  end
+  
   local pre_solve_callback = function(fixture_a, fixture_b, contact)
-   -- print(fixture_a, fixture_b, contact, 'about to resolve a contact')
   end
   
   local post_solve_callback = function(fixture_a, fixture_b, contact)
-   -- print(fixture_a, fixture_b, contact, 'just resolved a contact')
   end
   
   local world = love.physics.newWorld(0,0)

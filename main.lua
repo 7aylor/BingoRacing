@@ -1,22 +1,19 @@
 function love.load()
     Object = require("classic")
     input = require("input")
-    entities = require("entities")
+    require("entities")
+    entities = Entities()
     world = require("world")
-    debug = true
+    debug = false
 end
 
 function love.update(dt)
-    for i=1,#entities do
-        entities[i]:update(dt)
-    end
+    entities:update(dt)
     world:update(dt)
 end
 
 function love.draw()
-    for i=1,#entities do
-        entities[i]:draw()
-    end
+    entities:draw()
 end
 
 function love.keypressed(key)
