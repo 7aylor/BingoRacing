@@ -3,7 +3,10 @@ require("entities/car")
 require("entities/ball")
 require("entities/boundary")
 require("entities/goal")
-require("entities/cone")
+
+require("entities/obstacle")
+-- require("entities/cone")
+-- require("entities/cornerBumper")
 
 Entities = Object.extend(Object)
 
@@ -11,7 +14,7 @@ function Entities:new()
     local boundary_width = 10
     GOAL_SCALE = 0.5
     cone_scale = 0.25
-    cone = Cone(-100, -100, cone_scale) --not to be added to entities
+    cone = Obstacle(-100, -100, cone_scale, 0, imageManager.cone) --not to be added to entities
     cone_width = cone.width
     cone_height = cone.height
     cone_scale_adjuster = (1 / cone_scale)
@@ -106,14 +109,14 @@ function Entities:createConeBoundary()
 
     --side columns
     for i=1,num_cones_veritcal do
-        table.insert(self.baseObjects, Cone(cone_width / 2, ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale , cone_scale))
-        table.insert(self.baseObjects, Cone(screen_width - cone_width / 2, ((cone_height * cone_scale_adjuster * i) + cone_height / 2) * cone_scale, cone_scale))
+        table.insert(self.baseObjects, Obstacle(cone_width / 2, ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale , cone_scale, 0, imageManager.cone))
+        table.insert(self.baseObjects, Obstacle(screen_width - cone_width / 2, ((cone_height * cone_scale_adjuster * i) + cone_height / 2) * cone_scale, cone_scale, 0, imageManager.cone))
     end
 
     --top and bottom rows
     for i=0,num_cones_horizontal do
-        table.insert(self.baseObjects, Cone(((cone_width * cone_scale_adjuster * i) + cone_width / 2) * cone_scale, cone_height / 2, cone_scale))
-        table.insert(self.baseObjects, Cone(((cone_width * cone_scale_adjuster * i) + cone_width / 2) * cone_scale, screen_height - cone_height / 2, cone_scale))
+        table.insert(self.baseObjects, Obstacle(((cone_width * cone_scale_adjuster * i) + cone_width / 2) * cone_scale, cone_height / 2, cone_scale, 0, imageManager.cone))
+        table.insert(self.baseObjects, Obstacle(((cone_width * cone_scale_adjuster * i) + cone_width / 2) * cone_scale, screen_height - cone_height / 2, cone_scale, 0, imageManager.cone))
     end
 end
 
@@ -143,6 +146,8 @@ function Entities:loadLevel()
         self:clearLevel()
     end
 
+    -- currentLevel = 5
+
     if currentLevel == 1 then
         self.goals = {
             Goal(screen_width / 2, screen_height - 600, 0, GOAL_SCALE)
@@ -168,6 +173,30 @@ function Entities:loadLevel()
         }
         self.car = Car(50, screen_height - 50, -math.pi / 2.9)
     elseif currentLevel == 4 then
+
+        --first column from bottom to top
+        for i=1,50 do
+            table.insert(self.obstacles, Obstacle(screen_width / 3, screen_height - ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale , cone_scale, 0, imageManager.cone))
+        end
+
+        --second column from top to bottom
+        for i=1,50 do
+            table.insert(self.obstacles, Obstacle(2 * screen_width / 3, ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale , cone_scale, 0, imageManager.cone))
+        end
+
+        --top corners
+        table.insert(self.obstacles, Obstacle(15, 10, 0.5, math.pi/3, imageManager.cornerBumper))
+        table.insert(self.obstacles, Obstacle(screen_width - 15, 10, 0.5, -math.pi/3, imageManager.cornerBumper))
+        --bottoms corners
+        table.insert(self.obstacles, Obstacle(15, screen_height - 10, 0.5, -math.pi/3, imageManager.cornerBumper))
+        table.insert(self.obstacles, Obstacle(screen_width - 15, screen_height - 10, 0.5, math.pi/3, imageManager.cornerBumper))
+        --left third wall
+        table.insert(self.obstacles, Obstacle(screen_width /3 - 15, screen_height - 5, 0.5, math.pi/3, imageManager.cornerBumper))
+        table.insert(self.obstacles, Obstacle(screen_width /3 + 15, screen_height - 5, 0.5, -math.pi/3, imageManager.cornerBumper))
+        --right third wall
+        table.insert(self.obstacles, Obstacle(2 * screen_width /3 - 15, 10, 0.5, -math.pi/3, imageManager.cornerBumper))
+        table.insert(self.obstacles, Obstacle(2 * screen_width /3 + 15, 10, 0.5, math.pi/3, imageManager.cornerBumper))
+
         self.goals = {
             Goal(screen_width - 200, 150, 0, GOAL_SCALE)
         }
@@ -177,25 +206,38 @@ function Entities:loadLevel()
         self.car = Car(100, screen_height - 100, 0)
 
         --first column from bottom to top
-        for i=1,50 do
-            table.insert(self.obstacles, Cone(screen_width / 3, screen_height - ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale , cone_scale))
-        end
-
-        --second column from top to bottom
-        for i=1,50 do
-            table.insert(self.obstacles, Cone(2 * screen_width / 3, ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale , cone_scale))
-        end
-
-        --first column from bottom to top
         -- for i=1,17 do
-        --     table.insert(self.obstacles, Cone(2 * (screen_width / 3) + ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale, 80, cone_scale))
+        --     table.insert(self.obstacles, Obstacle(2 * (screen_width / 3) + ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale, 80, cone_scale, 0, imageManager.cone))
         -- end
 
         -- for i=1,17 do
-        --     table.insert(self.obstacles, Cone(2 * (screen_width / 3) + ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale, 80, cone_scale))
+        --     table.insert(self.obstacles, Obstacle(2 * (screen_width / 3) + ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale, 80, cone_scale, 0, imageManager.cone))
         -- end
 
     elseif currentLevel == 5 then
+        --first row from left to right
+        for i=1,80 do
+            table.insert(self.obstacles, Obstacle(((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale, screen_height / 3, cone_scale, 0, imageManager.cone))
+        end
+
+        --second row from right to left
+        for i=1,80 do
+            table.insert(self.obstacles, Obstacle(screen_width - ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale, 2 * screen_height / 3, cone_scale, 0, imageManager.cone))
+        end
+
+        --top corners
+        table.insert(self.obstacles, Obstacle(15, 10, 0.5, math.pi/3, imageManager.cornerBumper))
+        table.insert(self.obstacles, Obstacle(screen_width - 15, 10, 0.5, -math.pi/3, imageManager.cornerBumper))
+        --bottoms corners
+        table.insert(self.obstacles, Obstacle(15, screen_height - 10, 0.5, -math.pi/3, imageManager.cornerBumper))
+        table.insert(self.obstacles, Obstacle(screen_width - 15, screen_height - 10, 0.5, math.pi/3, imageManager.cornerBumper))
+        --left third wall
+        table.insert(self.obstacles, Obstacle(10, screen_height /3 - 10, 0.5, -math.pi/4, imageManager.cornerBumper))
+        table.insert(self.obstacles, Obstacle(10, screen_height /3 + 10, 0.5, math.pi/4, imageManager.cornerBumper))
+        -- --right third wall
+        table.insert(self.obstacles, Obstacle(screen_width - 10, 2 * screen_height /3 - 10, 0.5, math.pi/4, imageManager.cornerBumper))
+        table.insert(self.obstacles, Obstacle(screen_width - 10, 2 * screen_height /3 + 10, 0.5, -math.pi/4, imageManager.cornerBumper))
+
         self.goals = {
             Goal(screen_width - 150, screen_height - 125, math.pi / 2, GOAL_SCALE)
         }
@@ -203,16 +245,6 @@ function Entities:loadLevel()
             Ball(800, 150)
         }
         self.car = Car(100, 100, -math.pi / 2)
-
-        --first row from left to right
-        for i=1,80 do
-            table.insert(self.obstacles, Cone(((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale, screen_height / 3, cone_scale))
-        end
-
-        --second row from right to left
-        for i=1,80 do
-            table.insert(self.obstacles, Cone(screen_width - ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale, 2 * screen_height / 3, cone_scale))
-        end
     elseif currentLevel > 5 then
         currentLevel = 1
         self:loadLevel()

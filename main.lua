@@ -2,11 +2,12 @@ function love.load()
     Object = require("classic")
     input = require("input")
     world = require("world")
+    imageManager = require("imageManager")
     require("levelManager")
     require("entities")
     require("uiManager")
 
-    debug = true
+    debug = false
     currentGameState = "playing"
     previousGameState = "playing"
     currentLevel = 1

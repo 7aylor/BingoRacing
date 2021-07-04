@@ -1,28 +1,28 @@
---require("entities/obstacle")
-Obstacle = Object.extend(Object)
-world = require("world")
+require("entities/obstacle")
+CornerBumper = Obstacle.extend(Obstacle)
 
-function Obstacle:new(x,y,scale,rotation,image)
+function CornerBumper:new(x,y, scale, rotation)
+    -- CornerBumper.super:new(x, y, scale, imageManager.rock)
     self.scale = scale
-    self.image = image
+    self.image = imageManager.cornerBumer
     self.width = math.floor(self.image:getWidth() * scale)
     self.height = math.floor(self.image:getHeight() * scale)
     self.x = x
     self.y = y
 
     self.body = love.physics.newBody(world, x, y, "static")
-    self.shape = love.physics.newRectangleShape(0, 0, self.width, self.height)
+    self.shape = love.physics.newPolygonShape(-self.width / 2, -self.height / 2, -self.width / 2, self.height / 2, self.width  / 2, self.height / 2)
     self.fixture = love.physics.newFixture(self.body, self.shape)
     self.fixture:setUserData({
-        name = "cone"
+        name = "cornerBumper"
     })
 end
 
-function Obstacle:update(dt)
+function CornerBumper:update(dt)
 
 end
 
-function Obstacle:draw()
+function CornerBumper:draw()
     love.graphics.draw(self.image, self.x, self.y, 0, self.scale, self.scale, self.width / (self.scale * 2), self.height / (self.scale * 2))
     
     if debug then
@@ -33,7 +33,7 @@ function Obstacle:draw()
     end
 end
 
-function Obstacle:destroy()
+function CornerBumper:destroy()
     self.body:destroy()
     self.shape:release()
 end

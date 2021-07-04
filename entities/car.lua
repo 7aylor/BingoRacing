@@ -4,7 +4,7 @@ world = require("world")
 
 function Car:new(x, y, rotation)
     self.speed = 0
-    self.max_speed = 15000
+    self.max_speed = 20000
     self.start_acceleration = 200
     self.acceleration = self.start_acceleration
     self.max_acceleration = 800

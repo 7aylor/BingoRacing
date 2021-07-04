@@ -14,8 +14,8 @@ function UIManager:draw(entities)
         
     elseif currentGameState == "playing" then
         local time = math.floor(car.time)
-        love.graphics.print("HITS:" .. car.hits, 12, 12)
-        love.graphics.printf(time, screen_width - 150, 12, 135, "right")
+        love.graphics.print("HITS:" .. car.hits, 24, 24)
+        love.graphics.printf(time, screen_width - 150, 24, 150 - 24, "right")
     elseif currentGameState == "paused" then
         love.graphics.printf("PAUSED", 0, screen_height / 2 - self.fontSize / 2, screen_width, "center")
     elseif currentGameState == "endOfLevel" then
