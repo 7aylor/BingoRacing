@@ -2,7 +2,7 @@ Car = Object.extend(Object)
 input = require("input")
 world = require("world")
 
-function Car:new(x, y)
+function Car:new(x, y, rotation)
     self.speed = 0
     self.max_speed = 15000
     self.start_acceleration = 200
@@ -64,7 +64,7 @@ function Car:new(x, y)
         end
     })
 
-    self.body:setAngle(-math.pi / 2)
+    self.body:setAngle((-math.pi / 2) - rotation)
 end
 
 function Car:update(dt)

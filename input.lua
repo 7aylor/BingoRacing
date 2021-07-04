@@ -36,7 +36,7 @@ input.keypressed = function(key)
         love.event.quit('restart')
     end
     if input.keymap_action_contains(key, "next_level") then
-        if currentGameState == "endOfLevel" then
+        if currentGameState == "endOfLevel" or currentGameState == "win" then
             currentLevel = currentLevel + 1
             levelJustChanged = true
             paused = false

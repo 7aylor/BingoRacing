@@ -18,6 +18,13 @@ function love.load()
     entities = Entities()
     ui = UIManager()
     levelManager = LevelManager()
+
+    song = love.audio.newSource("sfx/Neon Laser Horizon.mp3", "stream")
+    song:setLooping(true)
+
+    if not debug then
+        song:play()
+    end
 end
 
 function love.update(dt)
