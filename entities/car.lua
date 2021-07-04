@@ -155,3 +155,8 @@ end
 function Car:setCarSpeed(newSpeed)
     self.speed = newSpeed
 end
+
+function Car:destroy()
+    self.body:destroy()
+    self.shape:release()
+end

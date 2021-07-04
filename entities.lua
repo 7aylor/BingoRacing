@@ -9,7 +9,7 @@ Entities = Object.extend(Object)
 
 function Entities:new()
     local boundary_width = 10
-    local GOAL_SCALE = 0.5
+    GOAL_SCALE = 0.5
 
     self.baseObjects = {
         Background(),
@@ -18,37 +18,19 @@ function Entities:new()
         Boundary(0,-boundary_width, screen_width,boundary_width), --top
         Boundary(0,screen_height, screen_width,boundary_width), --bottom
     }
+    self.obstacles = {}
+    self:createConeBoundary()
+
     self.goals = {
         --Goal(2 * screen_width / 3, screen_height - 600, 0, GOAL_SCALE),
-        Goal(screen_width / 3, screen_height - 600, 0, GOAL_SCALE)
+        --Goal(screen_width / 3, screen_height - 600, 0, GOAL_SCALE)
     }
     self.balls = {
         --Ball(2 * screen_width / 3, screen_height - 400, "red"),
-        Ball(screen_width / 3, screen_height - 400, "red")
+        --Ball(screen_width / 3, screen_height - 400, "red")
     }
-    self.car = Car(screen_width / 3, screen_height - 100)
-    self.obstacles = {}
-
-    --create a box around the screen of cones
-    local cone_scale = 0.25
-    local cone = Cone(-100, -100, cone_scale) --not to be added to entities
-    local cone_width = cone.width
-    local cone_height = cone.height
-    local num_cones_horizontal = math.ceil(screen_width / (cone_width * cone_scale))
-    local num_cones_veritcal = math.ceil(screen_height / (cone_width * cone_scale)) - 1
-    local cone_scale_adjuster = (1 / cone_scale)
-
-    --side columns
-    for i=1,num_cones_veritcal do
-        table.insert(self.obstacles, Cone(cone_width / 2, ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale , cone_scale))
-        table.insert(self.obstacles, Cone(screen_width - cone_width / 2, ((cone_height * cone_scale_adjuster * i) + cone_height / 2) * cone_scale, cone_scale))
-    end
-
-    --top and bottom rows
-    for i=0,num_cones_horizontal do
-        table.insert(self.obstacles, Cone(((cone_width * cone_scale_adjuster * i) + cone_width / 2) * cone_scale, cone_height / 2, cone_scale))
-        table.insert(self.obstacles, Cone(((cone_width * cone_scale_adjuster * i) + cone_width / 2) * cone_scale, screen_height - cone_height / 2, cone_scale))
-    end
+    self.car = nil--Car(screen_width / 3, screen_height - 100)
+    self:loadLevel()
 end
 
 function Entities:update(dt)
@@ -95,4 +77,74 @@ function Entities:checkAllGoalsScored()
         end
     end
     return true
+end
+
+function Entities:createConeBoundary()
+    --create a box around the screen of cones
+    local cone_scale = 0.25
+    local cone = Cone(-100, -100, cone_scale) --not to be added to entities
+    local cone_width = cone.width
+    local cone_height = cone.height
+    local num_cones_horizontal = math.ceil(screen_width / (cone_width * cone_scale))
+    local num_cones_veritcal = math.ceil(screen_height / (cone_width * cone_scale)) - 1
+    local cone_scale_adjuster = (1 / cone_scale)
+
+    --side columns
+    for i=1,num_cones_veritcal do
+        table.insert(self.baseObjects, Cone(cone_width / 2, ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale , cone_scale))
+        table.insert(self.baseObjects, Cone(screen_width - cone_width / 2, ((cone_height * cone_scale_adjuster * i) + cone_height / 2) * cone_scale, cone_scale))
+    end
+
+    --top and bottom rows
+    for i=0,num_cones_horizontal do
+        table.insert(self.baseObjects, Cone(((cone_width * cone_scale_adjuster * i) + cone_width / 2) * cone_scale, cone_height / 2, cone_scale))
+        table.insert(self.baseObjects, Cone(((cone_width * cone_scale_adjuster * i) + cone_width / 2) * cone_scale, screen_height - cone_height / 2, cone_scale))
+    end
+end
+
+function Entities:clearLevel()
+
+    --delete physics entities
+    for i,v in ipairs(self.obstacles) do
+        v:destroy()
+    end
+    for i,v in ipairs(self.goals) do
+        v:destroy()
+    end
+    for i,v in ipairs(self.balls) do
+        v:destroy()
+    end
+
+    self.car:destroy()
+
+    self.obstacles = {}
+    self.goals = {}
+    self.balls = {}
+    self.car = nil
+end
+
+function Entities:loadLevel()
+    if currentLevel ~= 1 then
+        self:clearLevel()
+    end
+
+    if currentLevel == 1 then
+        self.goals = {
+            Goal(screen_width / 2, screen_height - 600, 0, GOAL_SCALE)
+        }
+        self.balls = {
+            Ball(screen_width / 2, screen_height - 400)
+        }
+        self.car = Car(screen_width / 2, screen_height - 100)
+    elseif currentLevel == 2 then
+        self.goals = {
+            Goal(2 * screen_width / 3, screen_height - 600, 0, GOAL_SCALE),
+            Goal(screen_width / 3, screen_height - 600, 0, GOAL_SCALE)
+        }
+        self.balls = {
+            Ball(2 * screen_width / 3, screen_height - 400),
+            Ball(screen_width / 3, screen_height - 400)
+        }
+        self.car = Car(screen_width / 3, screen_height - 100)
+    end
 end

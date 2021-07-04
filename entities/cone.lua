@@ -31,3 +31,8 @@ function Cone:draw()
         love.graphics.setColor(1,1,1,1)
     end
 end
+
+function Cone:destroy()
+    self.body:destroy()
+    self.shape:release()
+end

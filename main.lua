@@ -2,22 +2,27 @@ function love.load()
     Object = require("classic")
     input = require("input")
     world = require("world")
+    require("levelManager")
     require("entities")
     require("uiManager")
 
     debug = true
     currentGameState = "playing"
     previousGameState = "playing"
+    currentLevel = 1
+    levelJustChanged = false
     screen_width = love.graphics:getWidth()
     screen_height = love.graphics:getHeight()
     paused = false
 
     entities = Entities()
     ui = UIManager()
+    levelManager = LevelManager()
 end
 
 function love.update(dt)
     if not paused then
+        levelManager:update(entities)
         entities:update(dt)
         world:update(dt)
     end

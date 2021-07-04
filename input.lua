@@ -37,6 +37,8 @@ input.keypressed = function(key)
     end
     if input.keymap_action_contains(key, "next_level") then
         if currentGameState == "endOfLevel" then
+            currentLevel = currentLevel + 1
+            levelJustChanged = true
             paused = false
         end
     end

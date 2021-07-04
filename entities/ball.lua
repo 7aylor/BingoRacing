@@ -49,3 +49,8 @@ function Ball:madeGoal()
     self.body:setLinearVelocity(x * 0.05, y * 0.05)
     self.inGoal = true
 end
+
+function Ball:destroy()
+    self.body:destroy()
+    self.shape:release()
+end

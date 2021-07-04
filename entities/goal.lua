@@ -75,3 +75,20 @@ function Goal:draw()
     end
     love.graphics.setColor(1,1,1,1)
 end
+
+function Goal:destroy()
+    self.leftBody:destroy() --also destroys fixture
+    self.leftShape:release()
+
+    self.topBlockerBody:destroy()
+    self.topBlockerShape:release()
+
+    self.topBody:destroy()
+    self.topShape:release()
+
+    self.rightBody:destroy()
+    self.rightShape:release()
+
+    self.closedBody:destroy()
+    self.closedShape:release()
+end

@@ -4,7 +4,6 @@ function UIManager:new()
     self.fontSize = 20
     self.font = love.graphics.newFont("fonts/Ldfcomicsans-jj7l.ttf", self.fontSize)
     love.graphics.setFont(self.font)
-
 end
 
 function UIManager:draw(entities)
@@ -33,5 +32,6 @@ function UIManager:draw(entities)
     elseif currentGameState == "win" then
         
     end
+
     love.graphics.setColor(1,1,1,1)
 end
