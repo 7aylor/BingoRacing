@@ -7,7 +7,7 @@ function love.load()
     require("entities")
     require("uiManager")
 
-    debug = false
+    debug = true
     currentGameState = "playing"
     previousGameState = "playing"
     currentLevel = 1

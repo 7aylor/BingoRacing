@@ -146,7 +146,7 @@ function Entities:loadLevel()
         self:clearLevel()
     end
 
-    --currentLevel = 5
+    -- currentLevel = 1
 
     if currentLevel == 1 then
         self.goals = {

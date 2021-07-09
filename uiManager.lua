@@ -53,5 +53,10 @@ function UIManager:draw(entities)
         love.graphics.printf("Press Enter to replay or Esc to exit", 0, print_top + (self.fontSize * (#entities.results + 1)), screen_width, "center")
     end
 
+    if debug then
+        love.graphics.setColor(0,1,0,1)
+        love.graphics.print(love.timer.getFPS(), screen_width - 40, screen_height - 40)
+    end
+
     love.graphics.setColor(1,1,1,1)
 end
