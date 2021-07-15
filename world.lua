@@ -3,12 +3,10 @@
     local bUserData = fixture_b:getUserData()
 
     if aUserData ~= nil and aUserData.name == "car" then
-      -- aUserData.collisionHandler(fixture_a, fixture_b)
       if bUserData ~= nil and bUserData.name == "ball" then
         aUserData.increaseHits()
       end
     elseif bUserData ~= nil and bUserData.name == "car" then
-      -- bUserData.collisionHandler(fixture_b, fixture_a)
       if aUserData ~= nil and aUserData.name == "ball" then
         bUserData.increaseHits()
       end
@@ -16,17 +14,6 @@
   end
   
   local end_contact_callback = function(fixture_a, fixture_b, contact)
-    local aUserData = fixture_a:getUserData()
-    local bUserData = fixture_b:getUserData()
-    
-    if aUserData ~= nil and bUserData ~= nil then
-      if (aUserData.name == "ball" and bUserData.name == "goal") or
-      (aUserData.name == "goal" and bUserData.name == "ball") then
-        aUserData.collisionHandler()
-        bUserData.collisionHandler()
-      end
-    end
-
   end
   
   local pre_solve_callback = function(fixture_a, fixture_b, contact)

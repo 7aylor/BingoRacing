@@ -1,11 +1,11 @@
 function love.load()
-    Object = require("classic")
-    input = require("input")
+    Object = require("libs/classic")
+    input = require("managers/inputManager")
     world = require("world")
-    imageManager = require("imageManager")
-    require("levelManager")
-    require("entities")
-    require("uiManager")
+    imageManager = require("managers/imageManager")
+    require("managers/levelManager")
+    require("entities/entities")
+    require("managers/uiManager")
 
     debug = true
     currentGameState = "playing"
@@ -47,4 +47,8 @@ end
 
 function love.keyreleased(key)
     input.keyreleased(key)
+end
+
+function math.dist(x1,y1, x2,y2) 
+    return ((x2-x1)^2+(y2-y1)^2)^0.5 
 end

@@ -2,7 +2,7 @@ require("entities/background")
 require("entities/car")
 require("entities/ball")
 require("entities/boundary")
-require("entities/goal")
+require("entities/hole")
 
 require("entities/obstacle")
 -- require("entities/cone")
@@ -12,7 +12,7 @@ Entities = Object.extend(Object)
 
 function Entities:new()
     local boundary_width = 10
-    GOAL_SCALE = 0.5
+    HOLE_SCALE = 0.8
     cone_scale = 0.25
     cone = Obstacle(-100, -100, cone_scale, 0, imageManager.cone) --not to be added to entities
     cone_width = cone.width
@@ -27,16 +27,10 @@ function Entities:new()
         Boundary(0,screen_height, screen_width,boundary_width), --bottom
     }
     self.obstacles = {}
-    self:createConeBoundary()
+    --self:createConeBoundary()
 
-    self.goals = {
-        --Goal(2 * screen_width / 3, screen_height - 600, 0, GOAL_SCALE),
-        --Goal(screen_width / 3, screen_height - 600, 0, GOAL_SCALE)
-    }
-    self.balls = {
-        --Ball(2 * screen_width / 3, screen_height - 400, "red"),
-        --Ball(screen_width / 3, screen_height - 400, "red")
-    }
+    self.ball = nil
+    self.hole = nil
     self.car = nil--Car(screen_width / 3, screen_height - 100)
     self.results = {} --used to keep track of scores
     self:loadLevel()
@@ -49,15 +43,12 @@ function Entities:update(dt)
     for i,v in ipairs(self.obstacles) do
         v:update(dt)
     end
-    for i,v in ipairs(self.goals) do
-        v:update(dt)
-    end
-    for i,v in ipairs(self.balls) do
-        v:update(dt)
-    end
+
+    self.hole:update(dt)
+    self.ball:update(dt)
     self.car:update(dt)
 
-    if self:checkAllGoalsScored() then
+    if self.ball.inHole then
         local thisLevelTime = string.format("%.2f", self.car.time)
 
         local levelScores = {
@@ -84,22 +75,9 @@ function Entities:draw()
     for i,v in ipairs(self.obstacles) do
         v:draw()
     end
-    for i,v in ipairs(self.goals) do
-        v:draw()
-    end
-    for i,v in ipairs(self.balls) do
-        v:draw()
-    end
+    self.hole:draw()
+    self.ball:draw()
     self.car:draw()
-end
-
-function Entities:checkAllGoalsScored()
-    for i,v in pairs(self.goals) do
-        if not v.closed then
-            return false
-        end
-    end
-    return true
 end
 
 function Entities:createConeBoundary()
@@ -126,51 +104,33 @@ function Entities:clearLevel()
     for i,v in ipairs(self.obstacles) do
         v:destroy()
     end
-    for i,v in ipairs(self.goals) do
-        v:destroy()
-    end
-    for i,v in ipairs(self.balls) do
-        v:destroy()
-    end
-
-    self.car:destroy()
+    
+    -- self.hole:destroy()
+    if self.ball ~= nil then self.ball:destroy() end
+    if self.car ~= nil then self.car:destroy() end
 
     self.obstacles = {}
-    self.goals = {}
-    self.balls = {}
+    self.hole = nil
+    self.ball = nil
     self.car = nil
 end
 
 function Entities:loadLevel()
-    if currentLevel ~= 1 then
-        self:clearLevel()
-    end
+    self:clearLevel()
 
     -- currentLevel = 1
 
     if currentLevel == 1 then
-        self.goals = {
-            Goal(screen_width / 2, screen_height - 600, 0, GOAL_SCALE)
-        }
-        self.balls = {
-            Ball(screen_width / 2, screen_height - 400)
-        }
+        self.hole = Hole(screen_width / 2 + 15, screen_height - 600, 0, HOLE_SCALE)
+        self.ball = Ball(screen_width / 2, screen_height - 400, self.hole)
         self.car = Car(screen_width / 2, screen_height - 100, 0)
     elseif currentLevel == 2 then
-        self.goals = {
-            Goal(screen_width - 200, screen_height / 2, math.pi / 2, GOAL_SCALE)
-        }
-        self.balls = {
-            Ball(300, screen_height / 2)
-        }
+        self.hole = Hole(screen_width - 200, screen_height / 2 + 15, math.pi / 2, HOLE_SCALE)
+        self.ball = Ball(300, screen_height / 2, self.hole)
         self.car = Car(100, screen_height / 2, -math.pi / 2)
     elseif currentLevel == 3 then
-        self.goals = {
-            Goal(screen_width - 50, 50, math.pi / 3.5, GOAL_SCALE)
-        }
-        self.balls = {
-            Ball(360, screen_height - 220)
-        }
+        self.hole = Hole(screen_width - 50, 50, math.pi / 3.5, HOLE_SCALE)
+        self.ball = Ball(360, screen_height - 220, self.hole)
         self.car = Car(50, screen_height - 50, -math.pi / 2.9)
     elseif currentLevel == 4 then
 
@@ -197,12 +157,8 @@ function Entities:loadLevel()
         table.insert(self.obstacles, Obstacle(2 * screen_width /3 - 15, 10, 0.5, -math.pi/3, imageManager.cornerBumper))
         table.insert(self.obstacles, Obstacle(2 * screen_width /3 + 15, 10, 0.5, math.pi/3, imageManager.cornerBumper))
 
-        self.goals = {
-            Goal(screen_width - 200, 150, 0, GOAL_SCALE)
-        }
-        self.balls = {
-            Ball(250, 300)
-        }
+        self.hole = Hole(screen_width - 200, 150, 0, HOLE_SCALE)
+        self.ball = Ball(250, 300, self.hole)
         self.car = Car(100, screen_height - 100, 0)
 
         --first column from bottom to top
@@ -238,12 +194,8 @@ function Entities:loadLevel()
         table.insert(self.obstacles, Obstacle(screen_width - 10, 2 * screen_height /3 - 10, 0.5, math.pi/4, imageManager.cornerBumper))
         table.insert(self.obstacles, Obstacle(screen_width - 10, 2 * screen_height /3 + 10, 0.5, -math.pi/4, imageManager.cornerBumper))
 
-        self.goals = {
-            Goal(screen_width - 150, screen_height - 125, math.pi / 2, GOAL_SCALE)
-        }
-        self.balls = {
-            Ball(800, 150)
-        }
+        self.hole = Hole(screen_width - 150, screen_height - 125, math.pi / 2, HOLE_SCALE)
+        self.ball = Ball(800, 150, self.hole)
         self.car = Car(100, 100, -math.pi / 2)
     elseif currentLevel > 5 then
         currentLevel = 1
