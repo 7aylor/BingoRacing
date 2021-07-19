@@ -3,9 +3,38 @@ function love.load()
     input = require("managers/inputManager")
     world = require("world")
     imageManager = require("managers/imageManager")
-    require("managers/levelManager")
+    require("managers/courseManager")
     require("entities/entities")
-    require("managers/uiManager")
+    -- local lume = require("libs/lume")
+
+    -- local testLevel = {
+    --     name = "course1",
+    --     holes = {
+    --         hole1 = {
+    --             car = {
+    --                 x = 100,
+    --                 y = 200,
+    --                 rotation = 0.3456
+    --             },
+    --             ball = {
+    --                 x = 100,
+    --                 y = 500
+    --             },
+    --             hole = {
+    --                 x = 400,
+    --                 y = 600
+    --             }
+    --         }
+    --     }
+    -- }
+
+    -- local levelData = lume.serialize(testLevel)
+    -- love.filesystem.write("course1.txt", levelData)
+
+    -- local course1 = love.filesystem.read("course1.txt")
+    -- local course1Data = lume.deserialize(course1)
+    -- print(course1Data.holes.hole1.hole.x)
+
 
     debug = true
     currentGameState = "playing"
@@ -17,8 +46,7 @@ function love.load()
     paused = false
 
     entities = Entities()
-    ui = UIManager()
-    levelManager = LevelManager()
+    courseManager = CourseManager()
 
     song = love.audio.newSource("sfx/Neon Laser Horizon.mp3", "stream")
     song:setLooping(true)
@@ -30,15 +58,15 @@ end
 
 function love.update(dt)
     if not paused then
-        levelManager:update(entities)
+        courseManager:update(entities)
         entities:update(dt)
         world:update(dt)
     end
 end
 
 function love.draw()
+    love.graphics.setBackgroundColor(0.1,0.5,0.7,1)
     entities:draw()
-    ui:draw(entities)
 end
 
 function love.keypressed(key)

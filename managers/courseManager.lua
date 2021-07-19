@@ -1,10 +1,10 @@
-LevelManager = Object.extend(Object)
+CourseManager = Object.extend(Object)
 
-function LevelManager:new()
-
+function CourseManager:new(data)
+    self.levelData = data
 end
 
-function LevelManager:update(entities)
+function CourseManager:update(entities)
     if levelJustChanged then
         levelJustChanged = false
         entities:loadLevel()

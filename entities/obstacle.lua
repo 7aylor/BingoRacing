@@ -24,7 +24,6 @@ function Obstacle:update(dt)
 end
 
 function Obstacle:draw()
-    -- love.graphics.draw(self.image, self.x, self.y, 0, self.scale, self.scale, self.width / (self.scale * 2), self.height / (self.scale * 2))
     love.graphics.draw(self.image, self.body:getX(), self.body:getY(), self.body:getAngle(), self.scale, self.scale, self.width / (self.scale * 2), self.height / (self.scale * 2))
     
     if debug then

@@ -9,7 +9,7 @@ function Car:new(x, y, rotation)
     self.acceleration_step = self.start_acceleration / 2
     self.acceleration = self.start_acceleration
     self.max_acceleration = self.start_acceleration * 0.9
-    self.turn_speed = 3
+    self.turn_speed = 2
     self.brake_speed = 1
 
     self.backing_up = false
@@ -26,7 +26,7 @@ function Car:new(x, y, rotation)
     -- print("backup_accelartion: " .. self.backup_accelartion)
     -- print("max_backup_accelaration: " .. self.max_backup_accelaration)
     -- print("-------------------------------")
-    self.scale = 0.45
+    self.scale = 0.5
 
     self.image = love.graphics.newImage("img/blue_car.png")
     self.height = self.image:getHeight() * self.scale
@@ -198,10 +198,6 @@ function Car:draw()
         local x = self.body:getX()
         local y = self.body:getY()
         local topLeftX,topLeftY,bottomRightX,bottomRightY = self.fixture:getBoundingBox(1)
-        
-        love.graphics.print("speed:" .. self.speed, 20, screen_height - 80)
-        love.graphics.print("acc:" .. self.acceleration, 20, screen_height - 60)
-        love.graphics.print("b_acc:" .. self.backup_accelartion, 20, screen_height - 40)
         
         love.graphics.setColor(1,0,0,1)
         love.graphics.points(x, y)

@@ -42,14 +42,11 @@ function Ball:update(dt)
     local x = self.body:getX()
     local y = self.body:getY()
     local distToHole = math.dist(x, y, self.hole.x, self.hole.y)
-    print(distToHole)
-    if distToHole < 5 then
+
+    if distToHole - self.radius + 3 <= 0 then
         self.body:setLinearVelocity(0, 0)
         self.inHole = true
-    elseif distToHole < 25 then
-        -- self.body:setAngularVelocity(500)
-        --instead of this, try making the ball move toward to the hole if it hits the edge, so it has a change to fall in
-
+    elseif distToHole < (self.hole.width/2 + self.radius - 6) then
         local directionToHole = math.atan2(y - self.hole.y, x - self.hole.x)
         local cos = math.cos(directionToHole)
         local sin = math.sin(directionToHole)
@@ -62,22 +59,32 @@ function Ball:update(dt)
             speedReducerX = 0.1
         elseif math.abs(vx) > 100 then
             speedReducerX = 0.25
-        else 
-            speedReducerX = 0.5 
+        elseif math.abs(vx) < 20 then
+            speedReducerX = 1 
+        else
+            speedReducerX = 0.5
         end
 
         if math.abs(vy) > 200 then
             speedReducerY = 0.1
         elseif math.abs(vy) > 100 then
             speedReducerY = 0.25
+        elseif math.abs(vy) < 20 then
+            speedReducerY = 1 
         else
-            speedReducerY = 0.5 
+            speedReducerY = 0.5
+        end
+
+        local angleForce = 0
+        if distToHole < (self.hole.width/2) then
+            angleForce = 50
+        else
+            angleForce = 30
         end
 
         self.body:applyLinearImpulse(-vx * speedReducerX, -vy * speedReducerY)
-        self.body:applyLinearImpulse(-cos * 50, -sin * 50)
+        self.body:applyLinearImpulse(-cos * angleForce, -sin * angleForce)
     end
-    print(self.body:getLinearVelocity())
 end
 
 function Ball:destroy()

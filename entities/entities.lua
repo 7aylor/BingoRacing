@@ -5,8 +5,7 @@ require("entities/boundary")
 require("entities/hole")
 
 require("entities/obstacle")
--- require("entities/cone")
--- require("entities/cornerBumper")
+require("managers/uiManager")
 
 Entities = Object.extend(Object)
 
@@ -18,6 +17,7 @@ function Entities:new()
     cone_width = cone.width
     cone_height = cone.height
     cone_scale_adjuster = (1 / cone_scale)
+    ui = UIManager()
 
     self.baseObjects = {
         Background(),
@@ -69,6 +69,8 @@ function Entities:update(dt)
 end
 
 function Entities:draw()
+    love.graphics.translate(-self.car.body:getX() + screen_width / 2, -self.car.body:getY() + screen_height / 2)
+
     for i,v in ipairs(self.baseObjects) do
         v:draw()
     end
@@ -78,6 +80,7 @@ function Entities:draw()
     self.hole:draw()
     self.ball:draw()
     self.car:draw()
+    ui:draw(self.car)
 end
 
 function Entities:createConeBoundary()
@@ -118,10 +121,10 @@ end
 function Entities:loadLevel()
     self:clearLevel()
 
-    -- currentLevel = 1
+    --currentLevel = 1
 
     if currentLevel == 1 then
-        self.hole = Hole(screen_width / 2 + 15, screen_height - 600, 0, HOLE_SCALE)
+        self.hole = Hole(screen_width / 2 + 13, screen_height - 600, 0, HOLE_SCALE)
         self.ball = Ball(screen_width / 2, screen_height - 400, self.hole)
         self.car = Car(screen_width / 2, screen_height - 100, 0)
     elseif currentLevel == 2 then
