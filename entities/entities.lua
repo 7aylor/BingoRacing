@@ -110,6 +110,7 @@ function Entities:clearLevel()
     
     -- self.hole:destroy()
     if self.ball ~= nil then self.ball:destroy() end
+    if self.hole ~= nil then self.hole:destroy() end
     if self.car ~= nil then self.car:destroy() end
 
     self.obstacles = {}
@@ -124,11 +125,11 @@ function Entities:loadLevel()
     --currentLevel = 1
 
     if currentLevel == 1 then
-        self.hole = Hole(screen_width / 2 + 13, screen_height - 600, 0, HOLE_SCALE)
+        self.hole = Hole(screen_width / 2, screen_height - 600, 0, HOLE_SCALE)
         self.ball = Ball(screen_width / 2, screen_height - 400, self.hole)
         self.car = Car(screen_width / 2, screen_height - 100, 0)
     elseif currentLevel == 2 then
-        self.hole = Hole(screen_width - 200, screen_height / 2 + 15, math.pi / 2, HOLE_SCALE)
+        self.hole = Hole(screen_width - 200, screen_height / 2, math.pi / 2, HOLE_SCALE)
         self.ball = Ball(300, screen_height / 2, self.hole)
         self.car = Car(100, screen_height / 2, -math.pi / 2)
     elseif currentLevel == 3 then

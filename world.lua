@@ -2,11 +2,11 @@
     local aUserData = fixture_a:getUserData()
     local bUserData = fixture_b:getUserData()
 
-    if aUserData ~= nil and aUserData.name == "car" then
+    if aUserData ~= nil and aUserData.name == "carPutter" then
       if bUserData ~= nil and bUserData.name == "ball" then
         aUserData.increaseHits()
       end
-    elseif bUserData ~= nil and bUserData.name == "car" then
+    elseif bUserData ~= nil and bUserData.name == "carPutter" then
       if aUserData ~= nil and aUserData.name == "ball" then
         bUserData.increaseHits()
       end
@@ -17,7 +17,6 @@
   end
   
   local pre_solve_callback = function(fixture_a, fixture_b, contact)
-    carCollision(fixture_a, fixture_b)
   end
   
   local post_solve_callback = function(fixture_a, fixture_b, contact)
@@ -28,9 +27,9 @@
     local aUserData = fixture_a:getUserData()
     local bUserData = fixture_b:getUserData()
 
-    if aUserData ~= nil and aUserData.name == "car" then
+    if aUserData ~= nil and aUserData.name == "carBody" then
       aUserData.collisionHandler(fixture_a, fixture_b)
-    elseif bUserData ~= nil and bUserData.name == "car" then
+    elseif bUserData ~= nil and bUserData.name == "carBody" then
       bUserData.collisionHandler(fixture_b, fixture_a)
     end
   end

@@ -7,8 +7,7 @@ function Boundary:new(x, y, width, height)
     self.body = love.physics.newBody(world, x + width/2, y + height/2, "static")
     self.shape = love.physics.newRectangleShape(width, height)
     self.fixture = love.physics.newFixture(self.body, self.shape)
-    -- self.body:setMass(1000)
-    self.fixture:setFriction(1)
+    self.fixture:setFilterData(tonumber('00001', 2), tonumber('10100', 2), 0)
 end
 
 function Boundary:update()

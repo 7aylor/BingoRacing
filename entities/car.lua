@@ -17,15 +17,6 @@ function Car:new(x, y, rotation)
     self.backup_accelartion = -self.start_acceleration
     self.max_backup_accelaration = -self.max_acceleration * 0.75
 
-    -- print("max_speed: " .. self.max_speed)
-    -- print("start_acceleration: " .. self.start_acceleration)
-    -- print("acceleration_step: " .. self.acceleration_step)
-    -- print("acceleration: " .. self.acceleration)
-    -- print("max_acceleration: " .. self.max_acceleration)
-    -- print("max_backup_speed: " .. self.max_backup_speed)
-    -- print("backup_accelartion: " .. self.backup_accelartion)
-    -- print("max_backup_accelaration: " .. self.max_backup_accelaration)
-    -- print("-------------------------------")
     self.scale = 0.5
 
     self.image = love.graphics.newImage("img/blue_car.png")
@@ -36,67 +27,36 @@ function Car:new(x, y, rotation)
     self.time = 0
     
     self.body = love.physics.newBody(world, x, y, "dynamic")
-    self.shape = love.physics.newCircleShape(self.width / 2 - 3)
+    self.shape = love.physics.newCircleShape(self.width / 2)
     self.fixture = love.physics.newFixture(self.body, self.shape)
 
+    --category: carBody, carPutter, Ball, Hole, Obstacles
+    self.fixture:setFilterData(tonumber('10000', 2), tonumber('00011', 2), 0)
+    
+    self.body:setAngle((-math.pi / 2) - rotation)
     self.body:setMassData(x,y, 500,0)
     self.body:setLinearDamping(2)
-    -- self.fixture:setFriction(1)
-    -- self.fixture:setRestitution(0.25)
-    -- self.fixture:setDensity(500)
 
-    self.body:setAngle((-math.pi / 2) - rotation)
-    
-    local hoodHitbox = {
-        self.height/2 - 16, -self.width/2 + 4,-- back right
-        self.height/2 - 16, self.width/2 - 4, -- back left
-        self.height/2 - 4, -self.width/2 + 4, -- front right outside
-        self.height/2 - 4, self.width/2 - 4   --front left outside
-    }
-    self.hood = love.physics.newBody(world, x, y, "dynamic")
-    self.hoodShape = love.physics.newPolygonShape(hoodHitbox)
-    self.hoodFixture = love.physics.newFixture(self.hood, self.hoodShape)
-    
-    self.hood:setMassData(x,y, 300,0)
-    self.hood:setAngle((-math.pi / 2) - rotation)
-    -- self.hood:setLinearDamping(2)
-    -- self.hoodFixture:setFriction(1)
-    self.hoodFixture:setRestitution(0.25)
-    
-    local trunkHitbox = {
-        -self.height/2 + 16, -self.width/2 + 4,-- back right
-        -self.height/2 + 16, self.width/2 - 4, -- back left
-        -self.height/2 + 4, -self.width/2 + 4, -- front right outside
-        -self.height/2 + 4, self.width/2 - 4   --front left outside
-    }
-    self.trunk = love.physics.newBody(world, x, y, "dynamic")
-    self.trunkShape = love.physics.newPolygonShape(trunkHitbox)
-    self.trunkFixture = love.physics.newFixture(self.trunk, self.trunkShape)
-    
-    self.trunk:setMassData(x,y, 300,0)
-    self.trunk:setAngle((-math.pi / 2) - rotation)
-    -- self.trunk:setLinearDamping(2)
-    -- self.trunkFixture:setFriction(1)
-    self.trunkFixture:setRestitution(0.25)
 
-    self.hoodBodyJoint = love.physics.newWeldJoint(self.body, self.hood, x, y, true)
-    self.trunkBodyJoint = love.physics.newWeldJoint(self.body, self.trunk, x, y, true)
+    self.putterBody = love.physics.newBody(world, x, y, "dynamic")
+    self.putterShape = love.physics.newRectangleShape(self.height - (24 * self.scale), self.width - (12 * self.scale))
+    self.putterFixture = love.physics.newFixture(self.putterBody, self.putterShape)
+    self.putterFixture:setFilterData(tonumber('01000', 2), tonumber('00100', 2), 0)
+    self.putterBody:setMassData(x,y, 500,0)
+    
+    self.putterBody:setAngle((-math.pi / 2) - rotation)
 
-    self.hoodFixture:setUserData({
-        name = "car",
+    self.joint = love.physics.newWeldJoint(self.body, self.putterBody, x, y, false)
+
+    self.fixture:setUserData({
+        name = "carBody",
         collisionHandler = function(me, other)
             self:handleCollision(me, other)
-        end,
-        increaseHits = function()
-            self:increaseHits()
         end
     })
 
-    self.trunkFixture:setUserData({
-        name = "car",
-        collisionHandler = function(me, other)
-            self:handleCollision(me, other)
-        end,
+    self.putterFixture:setUserData({
+        name = "carPutter",
         increaseHits = function()
             self:increaseHits()
         end
@@ -123,7 +83,7 @@ function Car:update(dt)
                 self.speed = 0
             end
         end
-        --would be nice to also apply some kind of visual indicator here as well
+        --would be nice to also apply some kind of visual indicator like backup lights here as well
     elseif input.actions["go_forward"] then
         self.backing_up = false
         self.acceleration = self.acceleration + self.acceleration_step * dt
@@ -174,14 +134,12 @@ function Car:update(dt)
         local direction = current_angle
         direction = direction - (self.turn_speed * dt)
         self.body:setAngle(direction)
-        self.hood:setAngle(direction)
-        self.trunk:setAngle(direction)
+        self.putterBody:setAngle(direction)
     elseif input.actions["turn_right"] then
         local direction = current_angle
         direction = direction + (self.turn_speed * dt)
         self.body:setAngle(direction)
-        self.hood:setAngle(direction)
-        self.trunk:setAngle(direction)
+        self.putterBody:setAngle(direction)
     end
     
     local cos = math.cos(current_angle)
@@ -201,8 +159,7 @@ function Car:draw()
         
         love.graphics.setColor(1,0,0,1)
         love.graphics.points(x, y)
-        love.graphics.polygon("line", self.hood:getWorldPoints(self.hoodShape:getPoints()))
-        love.graphics.polygon("line", self.trunk:getWorldPoints(self.trunkShape:getPoints()))
+        love.graphics.polygon("line", self.putterBody:getWorldPoints(self.putterShape:getPoints()))
         love.graphics.circle("line", self.body:getX(), self.body:getY(), self.shape:getRadius())
         love.graphics.line(x, y, x + math.cos(current_angle) * 100, y + math.sin(current_angle) * 100)
         
@@ -211,31 +168,18 @@ function Car:draw()
 end
 
 function Car:handleCollision(me, other)
-    self.speed = self.speed / 10
-    self.acceleration = self.acceleration / 10
-
-    if(other:getBody():getType() == "static") then
-        local x,y = self.body:getLinearVelocity()
-        if x < 1 then x = 1 end
-        if y < 1 then y = 1 end
-        local newX = -x * 8
-        local newY = -y * 8
-        self.body:setLinearVelocity(newX, newY)
-    end
+    self.speed = self.speed * 0.9
+    self.acceleration = self.acceleration * 0.9
 end
 
 function Car:increaseHits()
     self.hits = self.hits + 1
-    print(self.hits)
 end
 
 function Car:destroy()
-    self.hoodBodyJoint:destroy()
-    self.trunkBodyJoint:destroy()
+    self.joint:destroy()
     self.body:destroy()
     self.shape:release()
-    self.hood:destroy()
-    self.hoodShape:release()
-    self.trunk:destroy()
-    self.trunkShape:release()
+    self.putterBody:destroy()
+    self.putterShape:release()
 end

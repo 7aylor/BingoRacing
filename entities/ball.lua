@@ -18,6 +18,7 @@ function Ball:new(x, y, hole)
     self.fixture:setFriction(0.1)
     self.fixture:setRestitution(0.5)
     self.body:setLinearDamping(0.15)
+    self.fixture:setFilterData(tonumber('00100', 2), tonumber('01101', 2), 0)
     
     self.fixture:setUserData({
         name = "ball"

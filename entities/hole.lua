@@ -9,7 +9,11 @@ function Hole:new(x,y, rotation, scale)
     self.height = math.floor(self.image:getHeight() * scale)
     self.x = x
     self.y = y
-    
+
+    self.body = love.physics.newBody(world, x, y, "static")
+    self.shape = love.physics.newCircleShape(self.width / 2)
+    self.fixture = love.physics.newFixture(self.body, self.shape)
+    self.fixture:setFilterData(tonumber('00010', 2), tonumber('10000', 2), 0)
 end
 
 function Hole:update(dt)
@@ -23,8 +27,12 @@ function Hole:draw()
     if debug then
         love.graphics.setColor(1,0,0,1)
         love.graphics.points(self.x, self.y)
-        love.graphics.setColor(0,0,1,1)
-        love.graphics.circle("line", self.x, self.y, self.width / 2)
+        love.graphics.circle("line", self.body:getX(), self.body:getY(), self.width / 2)
     end
     love.graphics.setColor(1,1,1,1)
+end
+
+function Hole:destroy()
+    self.body:destroy()
+    self.shape:release()
 end
