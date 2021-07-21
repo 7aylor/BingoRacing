@@ -19,6 +19,15 @@ function UIManager:draw(car)
         local time = math.floor(car.time)
         love.graphics.print("HITS:" .. car.hits, carX - offsetX + 24, carY - offsetY + 24)
         love.graphics.printf(time, carX + offsetX - 150,  carY - offsetY + 24, 150 - 24, "right")
+        love.graphics.setColor(0,0,0,1)
+        local turboRectWidth = 100
+        local turboRectHeight = 20
+        love.graphics.rectangle("line", carX - turboRectWidth / 2, carY - offsetY + 24, turboRectWidth, turboRectHeight)
+        love.graphics.setColor(1,0,0,1)
+        love.graphics.rectangle("fill", carX - turboRectWidth / 2, carY - offsetY + 24, turboRectWidth, turboRectHeight)
+        love.graphics.setColor(0,1,0,1)
+        love.graphics.rectangle("fill", carX - turboRectWidth / 2, carY - offsetY + 24, math.clamp(0, car.turbo_power * turboRectWidth, turboRectWidth), turboRectHeight)
+
     elseif currentGameState == "paused" then
         love.graphics.printf("PAUSED", carX - offsetX, carY - self.fontSize / 2 - offsetY / 3, screen_width, "center")
     elseif currentGameState == "endOfLevel" then
@@ -59,6 +68,7 @@ function UIManager:draw(car)
     if debug then
         love.graphics.setColor(0,1,0,1)
         love.graphics.print(love.timer.getFPS(), carX + offsetX - 40, carY + offsetY - 40)
+
         love.graphics.print("speed:" .. car.speed, carX - offsetX + 20, carY + offsetY - 80)
         love.graphics.print("acc:" .. car.acceleration, carX - offsetX + 20, carY + offsetY - 60)
         love.graphics.print("b_acc:" .. car.backup_accelartion, carX - offsetX + 20, carY + offsetY - 40)

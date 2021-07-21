@@ -8,7 +8,8 @@ keymap = {
     quit = {"escape"},
     pause = {"p"},
     restart = {"r"},
-    next_level = {"return"}
+    next_level = {"return"},
+    turbo = {"lshift"}
 }
 --table that holds currently pressed keys and related functions
 input = {
