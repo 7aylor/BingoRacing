@@ -19,14 +19,25 @@ function UIManager:draw(car)
         local time = math.floor(car.time)
         love.graphics.print("HITS:" .. car.hits, carX - offsetX + 24, carY - offsetY + 24)
         love.graphics.printf(time, carX + offsetX - 150,  carY - offsetY + 24, 150 - 24, "right")
+        if car.turbo_depleted then
+            love.graphics.setColor(0.5, 0.5, 0.5, 1)
+        else
+            love.graphics.setColor(0,0,0,1)
+        end
+
+        --turob option 1
+        --love.graphics.printf("TURBO", carX - 50,  carY - offsetY + 24, 100, "center")
+
+        --turob option 2
         love.graphics.setColor(0,0,0,1)
         local turboRectWidth = 100
         local turboRectHeight = 20
+
         love.graphics.rectangle("line", carX - turboRectWidth / 2, carY - offsetY + 24, turboRectWidth, turboRectHeight)
         love.graphics.setColor(1,0,0,1)
         love.graphics.rectangle("fill", carX - turboRectWidth / 2, carY - offsetY + 24, turboRectWidth, turboRectHeight)
         love.graphics.setColor(0,1,0,1)
-        love.graphics.rectangle("fill", carX - turboRectWidth / 2, carY - offsetY + 24, math.clamp(0, car.turbo_power * turboRectWidth, turboRectWidth), turboRectHeight)
+        love.graphics.rectangle("fill", carX - turboRectWidth / 2, carY - offsetY + 24, math.clamp(0, car.turbo_power * turboRectWidth * (1 / car.turbo_max_power), turboRectWidth), turboRectHeight)
 
     elseif currentGameState == "paused" then
         love.graphics.printf("PAUSED", carX - offsetX, carY - self.fontSize / 2 - offsetY / 3, screen_width, "center")

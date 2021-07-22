@@ -12,8 +12,8 @@ function Car:new(x, y, rotation)
     self.turn_speed = 2
     self.brake_speed = 1
 
-    self.turbo_speed = self.max_speed * 1.6 --power to add to speed
-    self.turbo_max_power = 1
+    self.turbo_speed = self.max_speed * 3 --power to add to speed
+    self.turbo_max_power = 0.25
     self.turbo_power = self.turbo_max_power
     self.turbo_depleted = false
     self.turbo_cooldown = 5
@@ -93,26 +93,16 @@ function Car:update(dt)
         --would be nice to also apply some kind of visual indicator like backup lights here as well
     elseif input.actions["go_forward"] then
         self.backing_up = false
-        if input.actions["turbo"] and not self.turbo_depleted then
-            self.speed = self.speed + self.turbo_speed
-            self.turbo_power = self.turbo_power - dt
+        self.acceleration = self.acceleration + self.acceleration_step * dt
+        if self.acceleration > self.max_acceleration then
+            self.acceleration = self.max_acceleration
+        end
 
-            if self.turbo_power <= 0 then
-                self.turbo_depleted = true
-            end
-    
-            if self.speed > self.turbo_speed then
-                self.speed = self.turbo_speed
-            end
-        else
-            self.acceleration = self.acceleration + self.acceleration_step * dt
-            if self.acceleration > self.max_acceleration then
-                self.acceleration = self.max_acceleration
-            end
+        self.speed = self.speed + self.acceleration * dt
 
-            self.speed = self.speed + self.acceleration * dt
-
-            if self.speed > self.max_speed then
+        if self.speed > self.max_speed then
+            self.speed = self.speed - 5 * self.acceleration_step * dt
+            if self.speed < self.max_speed then
                 self.speed = self.max_speed
             end
         end
@@ -161,7 +151,21 @@ function Car:update(dt)
         self.putterBody:setAngle(direction)
     end
 
-    if self.turbo_depleted then
+    if input.actions["turbo"] and 
+        not self.backing_up and self.speed > 0 and
+        not self.turbo_depleted
+    then
+        self.speed = self.speed + self.turbo_speed
+        self.turbo_power = self.turbo_power - dt
+
+        if self.turbo_power <= 0 then
+            self.turbo_depleted = true
+        end
+
+        if self.speed > self.turbo_speed then
+            self.speed = self.turbo_speed
+        end
+    elseif self.turbo_depleted then
         self.turbo_cooldown_time = self.turbo_cooldown_time + dt
         if self.turbo_cooldown_time > self.turbo_cooldown then
             self.turbo_power = self.turbo_power + dt
