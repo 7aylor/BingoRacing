@@ -2,13 +2,26 @@
     local aUserData = fixture_a:getUserData()
     local bUserData = fixture_b:getUserData()
 
-    if aUserData ~= nil and aUserData.name == "carPutter" then
-      if bUserData ~= nil and bUserData.name == "ball" then
-        aUserData.increaseHits()
+    if aUserData ~= nil then
+      if bUserData ~= nil then
+        if aUserData.name == "carPutter" and bUserData.name == "ball" then
+          aUserData.increaseHits()
+        end
       end
-    elseif bUserData ~= nil and bUserData.name == "carPutter" then
-      if aUserData ~= nil and aUserData.name == "ball" then
-        bUserData.increaseHits()
+      
+      if aUserData.name == "ball" then
+        aUserData.handleCollision()
+      end
+    end
+    if bUserData ~= nil then
+      if aUserData ~= nil then
+        if bUserData.name == "carPutter" and aUserData.name == "ball" then
+          bUserData.increaseHits()
+        end
+      end
+
+      if bUserData.name == "ball" then
+        bUserData.handleCollision()
       end
     end
   end
@@ -17,6 +30,7 @@
   end
   
   local pre_solve_callback = function(fixture_a, fixture_b, contact)
+    
   end
   
   local post_solve_callback = function(fixture_a, fixture_b, contact)

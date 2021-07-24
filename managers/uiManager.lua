@@ -16,9 +16,19 @@ function UIManager:draw(car)
     if currentGameState == "mainMenu" then
         
     elseif currentGameState == "playing" then
+        
         local time = math.floor(car.time)
-        love.graphics.print("HITS:" .. car.hits, carX - offsetX + 24, carY - offsetY + 24)
-        love.graphics.printf(time, carX + offsetX - 150,  carY - offsetY + 24, 150 - 24, "right")
+        local padding = 10
+        love.graphics.setColor(0,0.25,0,0.75)
+        love.graphics.rectangle("fill", carX - offsetX, carY - offsetY, screen_width, 40)
+        love.graphics.setColor(1,1,1,1)
+
+
+        local ballWidth = imageManager.ball:getWidth()
+        local ballScale = 0.5
+        love.graphics.draw(imageManager.ball, carX - offsetX + padding, carY - offsetY + padding / 2, ballScale, ballScale)
+        love.graphics.print(car.hits, carX - offsetX + (ballWidth * ballScale) + padding, carY - offsetY + padding)
+        love.graphics.printf(formatTime(time), carX + offsetX - 150,  carY - offsetY + padding, 150 - padding, "right")
         if car.turbo_depleted then
             love.graphics.setColor(0.5, 0.5, 0.5, 1)
         else
@@ -33,11 +43,11 @@ function UIManager:draw(car)
         local turboRectWidth = 100
         local turboRectHeight = 20
 
-        love.graphics.rectangle("line", carX - turboRectWidth / 2, carY - offsetY + 24, turboRectWidth, turboRectHeight)
+        love.graphics.rectangle("line", carX - turboRectWidth / 2, carY - offsetY + padding, turboRectWidth, turboRectHeight)
         love.graphics.setColor(1,0,0,1)
-        love.graphics.rectangle("fill", carX - turboRectWidth / 2, carY - offsetY + 24, turboRectWidth, turboRectHeight)
+        love.graphics.rectangle("fill", carX - turboRectWidth / 2, carY - offsetY + padding, turboRectWidth, turboRectHeight)
         love.graphics.setColor(0,1,0,1)
-        love.graphics.rectangle("fill", carX - turboRectWidth / 2, carY - offsetY + 24, math.clamp(0, car.turbo_power * turboRectWidth * (1 / car.turbo_max_power), turboRectWidth), turboRectHeight)
+        love.graphics.rectangle("fill", carX - turboRectWidth / 2, carY - offsetY + padding, math.clamp(0, car.turbo_power * turboRectWidth * (1 / car.turbo_max_power), turboRectWidth), turboRectHeight)
 
     elseif currentGameState == "paused" then
         love.graphics.printf("PAUSED", carX - offsetX, carY - self.fontSize / 2 - offsetY / 3, screen_width, "center")

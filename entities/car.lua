@@ -13,7 +13,7 @@ function Car:new(x, y, rotation)
     self.brake_speed = 1
 
     self.turbo_speed = self.max_speed * 3 --power to add to speed
-    self.turbo_max_power = 0.25
+    self.turbo_max_power = 0.15
     self.turbo_power = self.turbo_max_power
     self.turbo_depleted = false
     self.turbo_cooldown = 5
@@ -49,7 +49,7 @@ function Car:new(x, y, rotation)
     self.putterShape = love.physics.newRectangleShape(self.height - (24 * self.scale), self.width - (12 * self.scale))
     self.putterFixture = love.physics.newFixture(self.putterBody, self.putterShape)
     self.putterFixture:setFilterData(tonumber('01000', 2), tonumber('00100', 2), 0)
-    self.putterBody:setMassData(x,y, 500,0)
+    self.putterBody:setMassData(x,y, 800,0)
     
     self.putterBody:setAngle((-math.pi / 2) - rotation)
 

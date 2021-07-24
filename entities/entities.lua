@@ -11,12 +11,7 @@ Entities = Object.extend(Object)
 
 function Entities:new()
     local boundary_width = 10
-    HOLE_SCALE = 0.8
-    cone_scale = 0.25
-    cone = Obstacle(-100, -100, cone_scale, 0, imageManager.cone) --not to be added to entities
-    cone_width = cone.width
-    cone_height = cone.height
-    cone_scale_adjuster = (1 / cone_scale)
+    HOLE_SCALE = 1
     ui = UIManager()
 
     self.baseObjects = {
@@ -83,23 +78,6 @@ function Entities:draw()
     ui:draw(self.car)
 end
 
-function Entities:createConeBoundary()
-    --create a box around the screen of cones
-    local num_cones_horizontal = math.ceil(screen_width / (cone_width * cone_scale))
-    local num_cones_veritcal = math.ceil(screen_height / (cone_width * cone_scale)) - 1
-
-    --side columns
-    for i=1,num_cones_veritcal do
-        table.insert(self.baseObjects, Obstacle(cone_width / 2, ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale , cone_scale, 0, imageManager.cone))
-        table.insert(self.baseObjects, Obstacle(screen_width - cone_width / 2, ((cone_height * cone_scale_adjuster * i) + cone_height / 2) * cone_scale, cone_scale, 0, imageManager.cone))
-    end
-
-    --top and bottom rows
-    for i=0,num_cones_horizontal do
-        table.insert(self.baseObjects, Obstacle(((cone_width * cone_scale_adjuster * i) + cone_width / 2) * cone_scale, cone_height / 2, cone_scale, 0, imageManager.cone))
-        table.insert(self.baseObjects, Obstacle(((cone_width * cone_scale_adjuster * i) + cone_width / 2) * cone_scale, screen_height - cone_height / 2, cone_scale, 0, imageManager.cone))
-    end
-end
 
 function Entities:clearLevel()
 
@@ -125,82 +103,82 @@ function Entities:loadLevel()
     --currentLevel = 1
 
     if currentLevel == 1 then
-        self.hole = Hole(screen_width / 2, screen_height - 600, 0, HOLE_SCALE)
+        self.hole = Hole(screen_width / 2 + 14, screen_height - 600, 0, HOLE_SCALE)
         self.ball = Ball(screen_width / 2, screen_height - 400, self.hole)
         self.car = Car(screen_width / 2, screen_height - 100, 0)
     elseif currentLevel == 2 then
-        self.hole = Hole(screen_width - 200, screen_height / 2, math.pi / 2, HOLE_SCALE)
+        self.hole = Hole(screen_width - 200, screen_height / 2 - 8, math.pi / 2, HOLE_SCALE)
         self.ball = Ball(300, screen_height / 2, self.hole)
         self.car = Car(100, screen_height / 2, -math.pi / 2)
     elseif currentLevel == 3 then
         self.hole = Hole(screen_width - 50, 50, math.pi / 3.5, HOLE_SCALE)
         self.ball = Ball(360, screen_height - 220, self.hole)
         self.car = Car(50, screen_height - 50, -math.pi / 2.9)
-    elseif currentLevel == 4 then
+    -- elseif currentLevel == 4 then
 
-        --first column from bottom to top
-        for i=1,50 do
-            table.insert(self.obstacles, Obstacle(screen_width / 3, screen_height - ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale , cone_scale, 0, imageManager.cone))
-        end
+    --     --first column from bottom to top
+    --     for i=1,50 do
+    --         table.insert(self.obstacles, Obstacle(screen_width / 3, screen_height - ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale , cone_scale, 0, imageManager.cone))
+    --     end
 
-        --second column from top to bottom
-        for i=1,50 do
-            table.insert(self.obstacles, Obstacle(2 * screen_width / 3, ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale , cone_scale, 0, imageManager.cone))
-        end
+    --     --second column from top to bottom
+    --     for i=1,50 do
+    --         table.insert(self.obstacles, Obstacle(2 * screen_width / 3, ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale , cone_scale, 0, imageManager.cone))
+    --     end
 
-        --top corners
-        table.insert(self.obstacles, Obstacle(15, 10, 0.5, math.pi/3, imageManager.cornerBumper))
-        table.insert(self.obstacles, Obstacle(screen_width - 15, 10, 0.5, -math.pi/3, imageManager.cornerBumper))
-        --bottoms corners
-        table.insert(self.obstacles, Obstacle(15, screen_height - 10, 0.5, -math.pi/3, imageManager.cornerBumper))
-        table.insert(self.obstacles, Obstacle(screen_width - 15, screen_height - 10, 0.5, math.pi/3, imageManager.cornerBumper))
-        --left third wall
-        table.insert(self.obstacles, Obstacle(screen_width /3 - 15, screen_height - 5, 0.5, math.pi/3, imageManager.cornerBumper))
-        table.insert(self.obstacles, Obstacle(screen_width /3 + 15, screen_height - 5, 0.5, -math.pi/3, imageManager.cornerBumper))
-        --right third wall
-        table.insert(self.obstacles, Obstacle(2 * screen_width /3 - 15, 10, 0.5, -math.pi/3, imageManager.cornerBumper))
-        table.insert(self.obstacles, Obstacle(2 * screen_width /3 + 15, 10, 0.5, math.pi/3, imageManager.cornerBumper))
+    --     --top corners
+    --     table.insert(self.obstacles, Obstacle(15, 10, 0.5, math.pi/3, imageManager.cornerBumper))
+    --     table.insert(self.obstacles, Obstacle(screen_width - 15, 10, 0.5, -math.pi/3, imageManager.cornerBumper))
+    --     --bottoms corners
+    --     table.insert(self.obstacles, Obstacle(15, screen_height - 10, 0.5, -math.pi/3, imageManager.cornerBumper))
+    --     table.insert(self.obstacles, Obstacle(screen_width - 15, screen_height - 10, 0.5, math.pi/3, imageManager.cornerBumper))
+    --     --left third wall
+    --     table.insert(self.obstacles, Obstacle(screen_width /3 - 15, screen_height - 5, 0.5, math.pi/3, imageManager.cornerBumper))
+    --     table.insert(self.obstacles, Obstacle(screen_width /3 + 15, screen_height - 5, 0.5, -math.pi/3, imageManager.cornerBumper))
+    --     --right third wall
+    --     table.insert(self.obstacles, Obstacle(2 * screen_width /3 - 15, 10, 0.5, -math.pi/3, imageManager.cornerBumper))
+    --     table.insert(self.obstacles, Obstacle(2 * screen_width /3 + 15, 10, 0.5, math.pi/3, imageManager.cornerBumper))
 
-        self.hole = Hole(screen_width - 200, 150, 0, HOLE_SCALE)
-        self.ball = Ball(250, 300, self.hole)
-        self.car = Car(100, screen_height - 100, 0)
+    --     self.hole = Hole(screen_width - 200, 150, 0, HOLE_SCALE)
+    --     self.ball = Ball(250, 300, self.hole)
+    --     self.car = Car(100, screen_height - 100, 0)
 
-        --first column from bottom to top
-        -- for i=1,17 do
-        --     table.insert(self.obstacles, Obstacle(2 * (screen_width / 3) + ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale, 80, cone_scale, 0, imageManager.cone))
-        -- end
+    --     --first column from bottom to top
+    --     -- for i=1,17 do
+    --     --     table.insert(self.obstacles, Obstacle(2 * (screen_width / 3) + ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale, 80, cone_scale, 0, imageManager.cone))
+    --     -- end
 
-        -- for i=1,17 do
-        --     table.insert(self.obstacles, Obstacle(2 * (screen_width / 3) + ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale, 80, cone_scale, 0, imageManager.cone))
-        -- end
+    --     -- for i=1,17 do
+    --     --     table.insert(self.obstacles, Obstacle(2 * (screen_width / 3) + ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale, 80, cone_scale, 0, imageManager.cone))
+    --     -- end
 
-    elseif currentLevel == 5 then
-        --first row from left to right
-        for i=1,80 do
-            table.insert(self.obstacles, Obstacle(((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale, screen_height / 3, cone_scale, 0, imageManager.cone))
-        end
+    -- elseif currentLevel == 5 then
+    --     --first row from left to right
+    --     for i=1,80 do
+    --         table.insert(self.obstacles, Obstacle(((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale, screen_height / 3, cone_scale, 0, imageManager.cone))
+    --     end
 
-        --second row from right to left
-        for i=1,80 do
-            table.insert(self.obstacles, Obstacle(screen_width - ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale, 2 * screen_height / 3, cone_scale, 0, imageManager.cone))
-        end
+    --     --second row from right to left
+    --     for i=1,80 do
+    --         table.insert(self.obstacles, Obstacle(screen_width - ((cone_height * cone_scale_adjuster * i) + (cone_height / 2)) * cone_scale, 2 * screen_height / 3, cone_scale, 0, imageManager.cone))
+    --     end
 
-        --top corners
-        table.insert(self.obstacles, Obstacle(15, 10, 0.5, math.pi/3, imageManager.cornerBumper))
-        table.insert(self.obstacles, Obstacle(screen_width - 15, 10, 0.5, -math.pi/3, imageManager.cornerBumper))
-        --bottoms corners
-        table.insert(self.obstacles, Obstacle(15, screen_height - 10, 0.5, -math.pi/3, imageManager.cornerBumper))
-        table.insert(self.obstacles, Obstacle(screen_width - 15, screen_height - 10, 0.5, math.pi/3, imageManager.cornerBumper))
-        --left third wall
-        table.insert(self.obstacles, Obstacle(10, screen_height /3 - 10, 0.5, -math.pi/4, imageManager.cornerBumper))
-        table.insert(self.obstacles, Obstacle(10, screen_height /3 + 10, 0.5, math.pi/4, imageManager.cornerBumper))
-        -- --right third wall
-        table.insert(self.obstacles, Obstacle(screen_width - 10, 2 * screen_height /3 - 10, 0.5, math.pi/4, imageManager.cornerBumper))
-        table.insert(self.obstacles, Obstacle(screen_width - 10, 2 * screen_height /3 + 10, 0.5, -math.pi/4, imageManager.cornerBumper))
+    --     --top corners
+    --     table.insert(self.obstacles, Obstacle(15, 10, 0.5, math.pi/3, imageManager.cornerBumper))
+    --     table.insert(self.obstacles, Obstacle(screen_width - 15, 10, 0.5, -math.pi/3, imageManager.cornerBumper))
+    --     --bottoms corners
+    --     table.insert(self.obstacles, Obstacle(15, screen_height - 10, 0.5, -math.pi/3, imageManager.cornerBumper))
+    --     table.insert(self.obstacles, Obstacle(screen_width - 15, screen_height - 10, 0.5, math.pi/3, imageManager.cornerBumper))
+    --     --left third wall
+    --     table.insert(self.obstacles, Obstacle(10, screen_height /3 - 10, 0.5, -math.pi/4, imageManager.cornerBumper))
+    --     table.insert(self.obstacles, Obstacle(10, screen_height /3 + 10, 0.5, math.pi/4, imageManager.cornerBumper))
+    --     -- --right third wall
+    --     table.insert(self.obstacles, Obstacle(screen_width - 10, 2 * screen_height /3 - 10, 0.5, math.pi/4, imageManager.cornerBumper))
+    --     table.insert(self.obstacles, Obstacle(screen_width - 10, 2 * screen_height /3 + 10, 0.5, -math.pi/4, imageManager.cornerBumper))
 
-        self.hole = Hole(screen_width - 150, screen_height - 125, math.pi / 2, HOLE_SCALE)
-        self.ball = Ball(800, 150, self.hole)
-        self.car = Car(100, 100, -math.pi / 2)
+    --     self.hole = Hole(screen_width - 150, screen_height - 125, math.pi / 2, HOLE_SCALE)
+    --     self.ball = Ball(800, 150, self.hole)
+    --     self.car = Car(100, 100, -math.pi / 2)
     elseif currentLevel > 5 then
         currentLevel = 1
         self:loadLevel()

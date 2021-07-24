@@ -5,6 +5,7 @@ function love.load()
     imageManager = require("managers/imageManager")
     require("managers/courseManager")
     require("entities/entities")
+    require("utilities")
     -- local lume = require("libs/lume")
 
     -- local testLevel = {
@@ -51,9 +52,9 @@ function love.load()
     song = love.audio.newSource("sfx/Neon Laser Horizon.mp3", "stream")
     song:setLooping(true)
 
-    if not debug then
-        song:play()
-    end
+    -- if not debug then
+    --     song:play()
+    -- end
 end
 
 function love.update(dt)
