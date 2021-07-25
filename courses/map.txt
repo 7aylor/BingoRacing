@@ -1,0 +1,10 @@
+Entities:
+x - x position in map
+y - x position in map
+s - scale
+r - rotation
+------------------
+Map:
+1 = wall
+2 = grass
+3 = rough

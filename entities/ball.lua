@@ -1,12 +1,12 @@
 Ball = Object.extend(Object)
 world = require("world")
 
-function Ball:new(x, y, hole)
+function Ball:new(x, y, scale, hole)
     self.image = imageManager.ball
     self.hole = hole
 
     self.inHole = false
-    self.scale = 0.4
+    self.scale = scale
     self.width = self.image:getWidth() * self.scale
     self.height = self.image:getHeight() * self.scale
     self.radius = self.width / 2
@@ -23,11 +23,7 @@ function Ball:new(x, y, hole)
     self.fixture:setUserData({
         name = "ball",
         handleCollision = function()
-            if self.body:getAngularVelocity() > 0 then
-                -- self:handleCollision(1000)
-            else
-                -- self:handleCollision(-1000)
-            end
+            
         end
     })
 end

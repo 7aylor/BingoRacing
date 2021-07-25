@@ -11,7 +11,7 @@ function Obstacle:new(x, y, scale, rotation, img)
     self.y = y
 
     self.body = love.physics.newBody(world, x, y, "static")
-    self.shape = love.physics.newRectangleShape(0, 0, self.width, self.height)
+    self.shape = common.rect64
     self.fixture = love.physics.newFixture(self.body, self.shape)
     self.fixture:setUserData({
         name = "obstacle"
@@ -35,6 +35,7 @@ function Obstacle:draw()
 end
 
 function Obstacle:destroy()
+    print("destroying obstacle")
     self.body:destroy()
-    self.shape:release()
+    -- self.shape:release()
 end
