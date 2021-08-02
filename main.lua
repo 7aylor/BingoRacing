@@ -7,6 +7,7 @@ function love.load()
     require("managers/courseManager")
     require("entities/entities")
     require("utilities")
+    require("events")
     -- local lume = require("libs/lume")
 
     -- local testLevel = {
@@ -41,8 +42,6 @@ function love.load()
     debug = true
     currentGameState = "playing"
     previousGameState = "playing"
-    currentLevel = 1
-    levelJustChanged = false
     screen_width = love.graphics:getWidth()
     screen_height = love.graphics:getHeight()
     paused = false
@@ -60,7 +59,7 @@ end
 
 function love.update(dt)
     if not paused then
-        courseManager:update(entities)
+        --courseManager:update(entities)
         entities:update(dt)
         world:update(dt)
     end

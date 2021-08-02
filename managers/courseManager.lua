@@ -7,6 +7,8 @@ require("entities/tile")
 CourseManager = Object.extend(Object)
 
 function CourseManager:new()
+    currentHole = 1
+    
     self.tile_size = 64
     self.courses = 
     {
@@ -24,14 +26,6 @@ function CourseManager:new()
 
     print("course: " .. self.current_course.name)
     print("hole: " .. self.current_hole_data.number)
-end
-
-function CourseManager:update(entities)
-    if levelJustChanged then
-        levelJustChanged = false
-        entities:loadLevel()
-        currentGameState = "playing"
-    end
 end
 
 function CourseManager:getCurrentMapObjects()

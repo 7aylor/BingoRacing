@@ -33,13 +33,11 @@ input.keypressed = function(key)
         paused = not paused
     end
     if input.keymap_action_contains(key, "restart") then
-        levelJustChanged = true
+        love.event.push("restartHole")
     end
     if input.keymap_action_contains(key, "next_level") then
-        if currentGameState == "endOfLevel" or currentGameState == "win" then
-            currentLevel = currentLevel + 1
-            levelJustChanged = true
-            paused = false
+        if currentGameState == "endOfLevel" or currentGameState == "endOfRound" then
+            love.event.push("goToNextHole")
         end
     end
 end

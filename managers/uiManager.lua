@@ -69,7 +69,7 @@ function UIManager:draw(car)
         love.graphics.printf(roundHits, carX - offsetX, print_top + self.fontSize, screen_width, "center")
         love.graphics.printf(roundTime, carX - offsetX, print_top + (2 * self.fontSize), screen_width, "center")
         love.graphics.printf("Press enter to continue to the next level", carX - offsetX, print_top + (3 * self.fontSize) + self.fontSize / 2, screen_width, "center")
-    elseif currentGameState == "win" then
+    elseif currentGameState == "endOfRound" then
 
         love.graphics.setColor(0.1,0,0.75, 0.8)
         love.graphics.rectangle("fill",carX - offsetX, carY - offsetY, screen_width, screen_height)

@@ -11,18 +11,10 @@ require("managers/courseManager")
 Entities = Object.extend(Object)
 
 function Entities:new()
-    local boundary_width = 10
-    -- HOLE_SCALE = 1
     ui = UIManager()
     courseManager = CourseManager()
 
-    self.baseObjects = {
-        -- Background(),
-        -- Boundary(-boundary_width,0, boundary_width,screen_height), --left
-        -- Boundary(screen_width,0, boundary_width,screen_height), --right
-        -- Boundary(0,-boundary_width, screen_width,boundary_width), --top
-        -- Boundary(0,screen_height, screen_width,boundary_width), --bottom
-    }
+    self.baseObjects = {}
     self.obstacles = {}
     self.ball = nil
     self.hole = nil
@@ -32,6 +24,8 @@ function Entities:new()
 end
 
 function Entities:update(dt)
+    print(#love.handlers)
+
     for i,v in ipairs(self.baseObjects) do
         v:update(dt)
     end
@@ -44,18 +38,18 @@ function Entities:update(dt)
     self.car:update(dt)
 
     if self.ball.inHole then
-        local thisLevelTime = string.format("%.2f", self.car.time)
+        local thisHoleTime = string.format("%.2f", self.car.time)
 
-        local levelScores = {
-            level = "level" .. currentLevel,
+        local holeScores = {
+            level = "Hole" .. currentHole,
             hits = self.car.hits,
-            time = thisLevelTime
+            time = thisHoleTime
         }
 
-        table.insert(self.results, levelScores)
+        table.insert(self.results, holeScores)
 
-        if currentLevel == 3 then
-            currentGameState = "win"
+        if currentHole == 3 then
+            currentGameState = "endOfRound"
         else
             currentGameState = "endOfLevel"
         end
@@ -87,7 +81,6 @@ function Entities:clearLevel()
         end
     end
 
-
     --delete physics entities
     for i,v in ipairs(self.obstacles) do
         v:destroy()
@@ -106,16 +99,16 @@ end
 
 function Entities:loadLevel()
     self:clearLevel()
-    -- currentLevel = 8
+    -- currentHole = 8
     
-    if currentLevel == 1 then
+    if currentHole == 1 then
         self:getCurrentEntities()
-    elseif currentLevel == 2 then
+    elseif currentHole == 2 then
         courseManager:goToNextHole()
         self:getCurrentEntities()
 
-    elseif currentLevel == 3 then
-        currentLevel = 1
+    elseif currentHole == 3 then
+        currentHole = 1
         self:loadLevel()
     end
 end
